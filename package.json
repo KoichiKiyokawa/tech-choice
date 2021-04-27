@@ -3,12 +3,16 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "ts-node ./script.ts"
+    "prepare": "husky install",
+    "fmt": "prettier --write . --ignore-path .gitignore"
   },
   "dependencies": {
     "@prisma/client": "2.21.2"
   },
   "devDependencies": {
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
     "prisma": "2.21.2",
     "ts-node": "9.1.1",
     "typescript": "4.2.3"
@@ -16,5 +20,8 @@
   "volta": {
     "node": "14.16.1",
     "yarn": "1.22.10"
+  },
+  "lint-staged": {
+    "*.{js,ts,md,json}": "prettier --write"
   }
 }
