@@ -1,0 +1,16 @@
+-- CreateTable
+CREATE TABLE "Framework" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "repositoryURL" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "TimeSeriesData" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "frameworkId" INTEGER NOT NULL,
+    "date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "starCount" INTEGER NOT NULL DEFAULT 0,
+    "openIssueCount" INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY ("frameworkId") REFERENCES "Framework" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
