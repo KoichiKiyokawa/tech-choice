@@ -2,7 +2,7 @@
 CREATE TABLE "Framework" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
-    "repositoryURL" TEXT NOT NULL
+    "owner" TEXT NOT NULL
 );
 
 -- CreateTable

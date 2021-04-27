@@ -11,7 +11,7 @@ generator client {
 model Framework {
   id                 Int              @id @default(autoincrement())
   name               String // フレームワーク名
-  repositoryURL      String // リポジトリの URL (基本的にGitHubを想定している)
+  owner              String // リポジトリのオーナー名 e.g. sveltjs, vuejs
   timeSeriesDataList TimeSeriesData[]
 }
 

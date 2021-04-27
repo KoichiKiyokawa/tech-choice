@@ -8,12 +8,10 @@ async function main() {
   const ownerWithNameList: { owner: "sveltejs"; name: "svelte" }[] = [
     { owner: "sveltejs", name: "svelte" },
   ];
+
   for (const ownerWithName of ownerWithNameList) {
     await prisma.framework.create({
-      data: {
-        name: ownerWithName.name,
-        repositoryURL: `https://github.com/${ownerWithName.owner}/${ownerWithName.name}`,
-      },
+      data: { ...ownerWithName },
     });
   }
 }
