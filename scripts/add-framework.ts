@@ -7,6 +7,7 @@ async function main() {
   // ... you will write your Prisma Client queries here
   const ownerWithNameList: { owner: "sveltejs"; name: "svelte" }[] = [
     { owner: "sveltejs", name: "svelte" },
+    // TODO: add more and more frameworks!!!
   ];
 
   for (const ownerWithName of ownerWithNameList) {
