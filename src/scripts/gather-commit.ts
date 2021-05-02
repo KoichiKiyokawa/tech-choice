@@ -6,6 +6,7 @@ import {
 } from "../generated/graphql";
 import { urql } from "../modules/urql";
 import dayjs from "dayjs";
+import { Decimal } from "decimal.js";
 
 const prisma = new PrismaClient();
 
@@ -35,12 +36,12 @@ async function main() {
       const score = target.history.nodes
         ?.flatMap((commit) => {
           if (commit == null) return [];
-          return (
-            (commit.additions + commit.deletions) /
-            (Math.abs(dayjs(commit.pushedDate).diff(new Date(), "day")) || 1)
-          );
+
+          return new Decimal(commit.additions + commit.deletions).dividedBy(
+            Math.abs(dayjs(commit.pushedDate).diff(new Date(), "day")) || 1
+          ); // avoid to devide 0 (instead of deviding 1)
         })
-        .reduce((sum, c) => sum + c, 0);
+        .reduce((sum, c) => sum.plus(c), new Decimal(0));
 
       console.log(`${name}: ${score}`);
     }
