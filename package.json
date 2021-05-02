@@ -10,6 +10,7 @@
   "dependencies": {
     "@prisma/client": "2.21.2",
     "@urql/core": "^2.0.0",
+    "dayjs": "^1.10.4",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
