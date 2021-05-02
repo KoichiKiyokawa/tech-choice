@@ -1,4 +1,4 @@
-query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp) {
+query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!) {
   repository(name: $name, owner: $owner) {
     defaultBranchRef {
       id

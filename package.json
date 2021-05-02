@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@prisma/client": "2.21.2",
-    "@urql/core": "^2.0.0"
+    "@urql/core": "^2.0.0",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.21.4",
@@ -17,6 +18,7 @@
     "@graphql-codegen/typescript-document-nodes": "1.17.11",
     "@graphql-codegen/typescript-operations": "^1.17.16",
     "@types/node": "^15.0.1",
+    "@types/node-fetch": "^2.5.10",
     "graphql": "^15.5.0",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
