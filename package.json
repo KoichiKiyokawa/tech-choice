@@ -4,13 +4,20 @@
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "fmt": "prettier --write . --ignore-path .gitignore"
+    "fmt": "prettier --write . --ignore-path .gitignore",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@prisma/client": "2.21.2"
+    "@prisma/client": "2.21.2",
+    "@urql/core": "^2.0.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.21.4",
+    "@graphql-codegen/typescript": "1.22.0",
+    "@graphql-codegen/typescript-document-nodes": "1.17.11",
+    "@graphql-codegen/typescript-operations": "^1.17.16",
     "@types/node": "^15.0.1",
+    "graphql": "^15.5.0",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
