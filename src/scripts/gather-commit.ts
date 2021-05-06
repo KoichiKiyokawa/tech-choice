@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 
 /**
  * 与えられたフレームワークの、直近1年のコミットとを収集する
- * @example `ts-node scripts/gather-commit.ts <frameworkId>`
+ * @example `ts-node scripts/gather-commit.ts`
  */
 async function main() {
   // const frameworkId = process.argv[2];
@@ -43,7 +43,10 @@ async function main() {
         })
         .reduce((sum, c) => sum.plus(c), new Decimal(0));
 
-      console.log(`${name}: ${score}`);
+      console.log(
+        `${name}: ${score}, commitCount: ${target.history.nodes?.length}`
+      );
+      console.log(target.history.nodes?.slice(-1)[0]);
     }
   }
 }
