@@ -15,9 +15,6 @@ const prisma = new PrismaClient();
  * @example `ts-node scripts/gather-commit.ts`
  */
 async function main() {
-  // const frameworkId = process.argv[2];
-  // if (frameworkId) console.log({ frameworkId });
-
   const nameWithOwnerList: { name: string; owner: string }[] = [
     { name: "svelte", owner: "sveltejs" },
     { name: "react", owner: "facebook" },
@@ -39,7 +36,7 @@ async function main() {
 
           return new Decimal(commit.additions + commit.deletions).dividedBy(
             Math.abs(dayjs(commit.pushedDate).diff(new Date(), "day")) || 1
-          ); // avoid to devide 0 (instead of deviding 1)
+          ); // avoid to devide 0 (instead, deviding 1)
         })
         .reduce((sum, c) => sum.plus(c), new Decimal(0));
 
