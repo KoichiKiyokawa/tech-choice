@@ -1,0 +1,21 @@
+query getIssueAndComments($name: String!, $owner: String!) {
+  repository(name: $name, owner: $owner) {
+    issues(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
+      totalCount
+      nodes {
+        id
+        body
+        closedAt
+        createdAt
+        state
+        comments(first: 100) {
+          nodes {
+            id
+            body
+            createdAt
+          }
+        }
+      }
+    }
+  }
+}
