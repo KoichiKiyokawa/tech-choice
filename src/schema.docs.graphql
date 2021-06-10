@@ -35,8 +35,7 @@ input AcceptEnterpriseAdministratorInvitationInput {
   """
   The id of the invitation being accepted
   """
-  invitationId: ID!
-    @possibleTypes(concreteTypes: ["EnterpriseAdministratorInvitation"])
+  invitationId: ID! @possibleTypes(concreteTypes: ["EnterpriseAdministratorInvitation"])
 }
 
 """
@@ -162,10 +161,7 @@ input AddAssigneesToAssignableInput {
   The id of the assignable object to add assignees to.
   """
   assignableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Assignable"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Assignable")
 
   """
   The id of users to add as assignees.
@@ -211,10 +207,7 @@ input AddCommentInput {
   The Node ID of the subject to modify.
   """
   subjectId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "IssueOrPullRequest"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "IssueOrPullRequest")
 }
 
 """
@@ -295,10 +288,7 @@ input AddLabelsToLabelableInput {
   The id of the labelable object to add labels to.
   """
   labelableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Labelable"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Labelable")
 }
 
 """
@@ -329,10 +319,7 @@ input AddProjectCardInput {
   The content of the card. Must be a member of the ProjectCardItem union
   """
   contentId: ID
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "ProjectCardItem"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "ProjectCardItem")
 
   """
   The note on the card.
@@ -661,10 +648,7 @@ input AddStarInput {
   The Starrable ID to star.
   """
   starrableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Gist", "Repository", "Topic"]
-      abstractType: "Starrable"
-    )
+    @possibleTypes(concreteTypes: ["Gist", "Repository", "Topic"], abstractType: "Starrable")
 }
 
 """
@@ -1884,8 +1868,7 @@ input CancelEnterpriseAdminInvitationInput {
   """
   The Node ID of the pending enterprise administrator invitation.
   """
-  invitationId: ID!
-    @possibleTypes(concreteTypes: ["EnterpriseAdministratorInvitation"])
+  invitationId: ID! @possibleTypes(concreteTypes: ["EnterpriseAdministratorInvitation"])
 }
 
 """
@@ -2739,10 +2722,7 @@ input ClearLabelsFromLabelableInput {
   The id of the labelable object to clear the labels from.
   """
   labelableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Labelable"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Labelable")
 }
 
 """
@@ -2853,10 +2833,7 @@ input CloneTemplateRepositoryInput {
   The ID of the owner for the new repository.
   """
   ownerId: ID!
-    @possibleTypes(
-      concreteTypes: ["Organization", "User"]
-      abstractType: "RepositoryOwner"
-    )
+    @possibleTypes(concreteTypes: ["Organization", "User"], abstractType: "RepositoryOwner")
 
   """
   The Node ID of the template repository.
@@ -5452,10 +5429,7 @@ input CreateIpAllowListEntryInput {
   The ID of the owner for which to create the new IP allow list entry.
   """
   ownerId: ID!
-    @possibleTypes(
-      concreteTypes: ["Enterprise", "Organization"]
-      abstractType: "IpAllowListOwner"
-    )
+    @possibleTypes(concreteTypes: ["Enterprise", "Organization"], abstractType: "IpAllowListOwner")
 }
 
 """
@@ -5778,10 +5752,7 @@ input CreateRepositoryInput {
   The ID of the owner for the new repository.
   """
   ownerId: ID
-    @possibleTypes(
-      concreteTypes: ["Organization", "User"]
-      abstractType: "RepositoryOwner"
-    )
+    @possibleTypes(concreteTypes: ["Organization", "User"], abstractType: "RepositoryOwner")
 
   """
   When an organization is specified as the owner, this ID identifies the team
@@ -6060,9 +6031,7 @@ type CreatedIssueContributionEdge {
 """
 Represents either a issue the viewer can access or a restricted contribution.
 """
-union CreatedIssueOrRestrictedContribution =
-    CreatedIssueContribution
-  | RestrictedContribution
+union CreatedIssueOrRestrictedContribution = CreatedIssueContribution | RestrictedContribution
 
 """
 Represents the contribution a user made on GitHub by opening a pull request.
@@ -6462,8 +6431,7 @@ input DeleteBranchProtectionRuleInput {
   """
   The global relay id of the branch protection rule to be deleted.
   """
-  branchProtectionRuleId: ID!
-    @possibleTypes(concreteTypes: ["BranchProtectionRule"])
+  branchProtectionRuleId: ID! @possibleTypes(concreteTypes: ["BranchProtectionRule"])
 
   """
   A unique identifier for the client performing the mutation.
@@ -6970,8 +6938,7 @@ type DependencyGraphDependency @preview(toggledBy: "hawkgirl-preview") {
 """
 The connection type for DependencyGraphDependency.
 """
-type DependencyGraphDependencyConnection
-  @preview(toggledBy: "hawkgirl-preview") {
+type DependencyGraphDependencyConnection @preview(toggledBy: "hawkgirl-preview") {
   """
   A list of edges.
   """
@@ -7011,8 +6978,7 @@ type DependencyGraphDependencyEdge @preview(toggledBy: "hawkgirl-preview") {
 """
 Dependency manifest for a repository
 """
-type DependencyGraphManifest implements Node
-  @preview(toggledBy: "hawkgirl-preview") {
+type DependencyGraphManifest implements Node @preview(toggledBy: "hawkgirl-preview") {
   """
   Path to view the manifest file blob
   """
@@ -8453,9 +8419,7 @@ type EnterpriseMemberEdge {
   Whether the user does not have a license for the enterprise.
   """
   isUnlicensed: Boolean!
-    @deprecated(
-      reason: "All members consume a license Removal on 2021-01-01 UTC."
-    )
+    @deprecated(reason: "All members consume a license Removal on 2021-01-01 UTC.")
 
   """
   The item at the end of the edge.
@@ -8621,9 +8585,7 @@ type EnterpriseOutsideCollaboratorEdge {
   Whether the outside collaborator does not have a license for the enterprise.
   """
   isUnlicensed: Boolean!
-    @deprecated(
-      reason: "All outside collaborators consume a license Removal on 2021-01-01 UTC."
-    )
+    @deprecated(reason: "All outside collaborators consume a license Removal on 2021-01-01 UTC.")
 
   """
   The item at the end of the edge.
@@ -8882,10 +8844,7 @@ type EnterpriseOwnerInfo {
     """
     Ordering options for Enterprise Server installations returned.
     """
-    orderBy: EnterpriseServerInstallationOrder = {
-      field: HOST_NAME
-      direction: ASC
-    }
+    orderBy: EnterpriseServerInstallationOrder = { field: HOST_NAME, direction: ASC }
   ): EnterpriseServerInstallationConnection!
 
   """
@@ -9351,10 +9310,7 @@ type EnterpriseOwnerInfo {
     """
     Ordering options for pending enterprise administrator invitations returned from the connection.
     """
-    orderBy: EnterpriseAdministratorInvitationOrder = {
-      field: CREATED_AT
-      direction: DESC
-    }
+    orderBy: EnterpriseAdministratorInvitationOrder = { field: CREATED_AT, direction: DESC }
 
     """
     The search string to look for.
@@ -9699,9 +9655,7 @@ type EnterprisePendingCollaboratorEdge {
   Whether the invited collaborator does not have a license for the enterprise.
   """
   isUnlicensed: Boolean!
-    @deprecated(
-      reason: "All pending collaborators consume a license Removal on 2021-01-01 UTC."
-    )
+    @deprecated(reason: "All pending collaborators consume a license Removal on 2021-01-01 UTC.")
 
   """
   The item at the end of the edge.
@@ -9782,9 +9736,7 @@ type EnterprisePendingMemberInvitationEdge {
   Whether the invitation has a license for the enterprise.
   """
   isUnlicensed: Boolean!
-    @deprecated(
-      reason: "All pending members consume a license Removal on 2020-07-01 UTC."
-    )
+    @deprecated(reason: "All pending members consume a license Removal on 2020-07-01 UTC.")
 
   """
   The item at the end of the edge.
@@ -9941,10 +9893,7 @@ type EnterpriseServerInstallation implements Node {
     """
     Ordering options for Enterprise Server user accounts uploads returned from the connection.
     """
-    orderBy: EnterpriseServerUserAccountsUploadOrder = {
-      field: CREATED_AT
-      direction: DESC
-    }
+    orderBy: EnterpriseServerUserAccountsUploadOrder = { field: CREATED_AT, direction: DESC }
   ): EnterpriseServerUserAccountsUploadConnection!
 }
 
@@ -10059,10 +10008,7 @@ type EnterpriseServerUserAccount implements Node {
     """
     Ordering options for Enterprise Server user account emails returned from the connection.
     """
-    orderBy: EnterpriseServerUserAccountEmailOrder = {
-      field: EMAIL
-      direction: ASC
-    }
+    orderBy: EnterpriseServerUserAccountEmailOrder = { field: EMAIL, direction: ASC }
   ): EnterpriseServerUserAccountEmailConnection!
 
   """
@@ -13859,11 +13805,7 @@ input LockLockableInput {
   """
   ID of the item to be locked.
   """
-  lockableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Lockable"
-    )
+  lockableId: ID! @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Lockable")
 }
 
 """
@@ -15412,12 +15354,7 @@ input MinimizeCommentInput {
   """
   subjectId: ID!
     @possibleTypes(
-      concreteTypes: [
-        "CommitComment"
-        "GistComment"
-        "IssueComment"
-        "PullRequestReviewComment"
-      ]
+      concreteTypes: ["CommitComment", "GistComment", "IssueComment", "PullRequestReviewComment"]
       abstractType: "Minimizable"
     )
 }
@@ -27695,10 +27632,7 @@ input RemoveAssigneesFromAssignableInput {
   The id of the assignable object to remove assignees from.
   """
   assignableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Assignable"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Assignable")
 
   """
   The id of users to remove as assignees.
@@ -27904,10 +27838,7 @@ input RemoveLabelsFromLabelableInput {
   The id of the Labelable to remove labels from.
   """
   labelableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Labelable"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Labelable")
 }
 
 """
@@ -28026,10 +27957,7 @@ input RemoveStarInput {
   The Starrable ID to unstar.
   """
   starrableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Gist", "Repository", "Topic"]
-      abstractType: "Starrable"
-    )
+    @possibleTypes(concreteTypes: ["Gist", "Repository", "Topic"], abstractType: "Starrable")
 }
 
 """
@@ -34637,10 +34565,7 @@ type SponsorsListing implements Node {
     """
     Ordering options for Sponsors tiers returned from the connection.
     """
-    orderBy: SponsorsTierOrder = {
-      field: MONTHLY_PRICE_IN_CENTS
-      direction: ASC
-    }
+    orderBy: SponsorsTierOrder = { field: MONTHLY_PRICE_IN_CENTS, direction: ASC }
   ): SponsorsTierConnection
 }
 
@@ -35966,20 +35891,17 @@ type Team implements MemberStatusable & Node & Subscribable {
   """
   True if review assignment is enabled for this team
   """
-  reviewRequestDelegationEnabled: Boolean!
-    @preview(toggledBy: "stone-crop-preview")
+  reviewRequestDelegationEnabled: Boolean! @preview(toggledBy: "stone-crop-preview")
 
   """
   How many team members are required for review assignment for this team
   """
-  reviewRequestDelegationMemberCount: Int
-    @preview(toggledBy: "stone-crop-preview")
+  reviewRequestDelegationMemberCount: Int @preview(toggledBy: "stone-crop-preview")
 
   """
   When assigning team members via delegation, whether the entire team should be notified as well.
   """
-  reviewRequestDelegationNotifyTeam: Boolean!
-    @preview(toggledBy: "stone-crop-preview")
+  reviewRequestDelegationNotifyTeam: Boolean! @preview(toggledBy: "stone-crop-preview")
 
   """
   The slug corresponding to the team.
@@ -38129,11 +38051,7 @@ input UnlockLockableInput {
   """
   ID of the item to be unlocked.
   """
-  lockableId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "Lockable"
-    )
+  lockableId: ID! @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "Lockable")
 }
 
 """
@@ -38220,10 +38138,7 @@ input UnmarkIssueAsDuplicateInput {
   ID of the issue or pull request currently considered canonical/authoritative/original.
   """
   canonicalId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "IssueOrPullRequest"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "IssueOrPullRequest")
 
   """
   A unique identifier for the client performing the mutation.
@@ -38234,10 +38149,7 @@ input UnmarkIssueAsDuplicateInput {
   ID of the issue or pull request currently marked as a duplicate.
   """
   duplicateId: ID!
-    @possibleTypes(
-      concreteTypes: ["Issue", "PullRequest"]
-      abstractType: "IssueOrPullRequest"
-    )
+    @possibleTypes(concreteTypes: ["Issue", "PullRequest"], abstractType: "IssueOrPullRequest")
 }
 
 """
@@ -38300,12 +38212,7 @@ input UnminimizeCommentInput {
   """
   subjectId: ID!
     @possibleTypes(
-      concreteTypes: [
-        "CommitComment"
-        "GistComment"
-        "IssueComment"
-        "PullRequestReviewComment"
-      ]
+      concreteTypes: ["CommitComment", "GistComment", "IssueComment", "PullRequestReviewComment"]
       abstractType: "Minimizable"
     )
 }
@@ -38464,8 +38371,7 @@ input UpdateBranchProtectionRuleInput {
   """
   The global relay id of the branch protection rule to be updated.
   """
-  branchProtectionRuleId: ID!
-    @possibleTypes(concreteTypes: ["BranchProtectionRule"])
+  branchProtectionRuleId: ID! @possibleTypes(concreteTypes: ["BranchProtectionRule"])
 
   """
   A unique identifier for the client performing the mutation.
@@ -39362,10 +39268,7 @@ input UpdateIpAllowListEnabledSettingInput {
   The ID of the owner on which to set the IP allow list enabled setting.
   """
   ownerId: ID!
-    @possibleTypes(
-      concreteTypes: ["Enterprise", "Organization"]
-      abstractType: "IpAllowListOwner"
-    )
+    @possibleTypes(concreteTypes: ["Enterprise", "Organization"], abstractType: "IpAllowListOwner")
 
   """
   The value for the IP allow list enabled setting.
@@ -39845,8 +39748,7 @@ input UpdatePullRequestReviewCommentInput {
   """
   The Node ID of the comment to modify.
   """
-  pullRequestReviewCommentId: ID!
-    @possibleTypes(concreteTypes: ["PullRequestReviewComment"])
+  pullRequestReviewCommentId: ID! @possibleTypes(concreteTypes: ["PullRequestReviewComment"])
 }
 
 """
@@ -40054,14 +39956,7 @@ input UpdateSubscriptionInput {
   """
   subscribableId: ID!
     @possibleTypes(
-      concreteTypes: [
-        "Commit"
-        "Issue"
-        "PullRequest"
-        "Repository"
-        "Team"
-        "TeamDiscussion"
-      ]
+      concreteTypes: ["Commit", "Issue", "PullRequest", "Repository", "Team", "TeamDiscussion"]
       abstractType: "Subscribable"
     )
 }
@@ -40175,8 +40070,7 @@ type UpdateTeamDiscussionPayload {
 """
 Autogenerated input type of UpdateTeamReviewAssignment
 """
-input UpdateTeamReviewAssignmentInput
-  @preview(toggledBy: "stone-crop-preview") {
+input UpdateTeamReviewAssignmentInput @preview(toggledBy: "stone-crop-preview") {
   """
   The algorithm to use for review assignment
   """

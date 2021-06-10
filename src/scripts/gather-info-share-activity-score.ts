@@ -11,9 +11,9 @@ import { Decimal } from 'decimal.js'
 const prisma = new PrismaClient()
 
 /**
- * メンテナンスがされているかの指標(maintenance)を計算
+ * 情報共有の活発さ(infoShareActivity)を計算
  * 与えられたフレームワークの、直近100件のissueを収集する。
- * @see /images/maintenance.png
+ * それぞれのissueの、コメントについて、「コメントの文字数 ÷ 経過日数」を計算し、足し上げる。
  */
 async function main() {
   const nameWithOwnerList: { name: string; owner: string }[] = [
@@ -30,21 +30,22 @@ async function main() {
       })
       .toPromise()
 
-    let issueCloseSpeedScore = new Decimal(0) // issueがどれくらい早くcloseされたかのスコア
-    let issueCommentByCollaboratorScore = new Decimal(0) // コラボレータによるissueコメントのスコア
-    let abandonedScore = new Decimal(0) // どれくらい放置されているかを表す指標
-
+    let infoShareActivityScore = new Decimal(0)
     result.data?.repository?.issues.nodes?.forEach((issue) => {
       issue?.comments.nodes?.forEach((comment) => {
-        // TODO
+        const eachCommentBodyLength = comment?.body.length ?? 0 // それぞれのコメントの文字数
+        const eachCommentElapsedDate = dayjs().diff(comment?.createdAt, 'day') // それぞれのコメントの経過日数
+        infoShareActivityScore = infoShareActivityScore.plus(
+          new Decimal(eachCommentBodyLength).dividedBy(new Decimal(eachCommentElapsedDate || 1)) // 0で割るのを防ぐ
+        )
       })
     })
 
-    const maintenanceScore = issueCloseSpeedScore
-      .plus(issueCommentByCollaboratorScore)
-      .minus(abandonedScore)
-
-    console.log(`${name}: ${maintenanceScore}`)
+    console.log(`${name}: ${infoShareActivityScore}`)
+    // 2021/06/10 result
+    // svelte: 8548.6102472683853181
+    // react: 16413.883272641191847
+    // vue: 2390.5059551806196314
   }
 }
 

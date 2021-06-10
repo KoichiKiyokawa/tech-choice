@@ -36,5 +36,10 @@
   },
   "lint-staged": {
     "*.{js,ts,md,json}": "prettier --write"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 100
   }
 }
