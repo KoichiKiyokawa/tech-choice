@@ -20443,7 +20443,7 @@ export type ViewerHovercardContext = HovercardContext & {
 export type GetCommitHistoryQueryVariables = Exact<{
   name: Scalars["String"];
   owner: Scalars["String"];
-  since?: Maybe<Scalars["GitTimestamp"]>;
+  since: Scalars["GitTimestamp"];
 }>;
 
 export type GetCommitHistoryQuery = { __typename?: "Query" } & {
@@ -20476,11 +20476,51 @@ export type GetCommitHistoryQuery = { __typename?: "Query" } & {
   >;
 };
 
+export type GetIssueAndCommentsQueryVariables = Exact<{
+  name: Scalars["String"];
+  owner: Scalars["String"];
+}>;
+
+export type GetIssueAndCommentsQuery = { __typename?: "Query" } & {
+  repository?: Maybe<
+    { __typename?: "Repository" } & {
+      issues: { __typename?: "IssueConnection" } & Pick<
+        IssueConnection,
+        "totalCount"
+      > & {
+          nodes?: Maybe<
+            Array<
+              Maybe<
+                { __typename?: "Issue" } & Pick<
+                  Issue,
+                  "id" | "body" | "closedAt" | "createdAt" | "state"
+                > & {
+                    comments: { __typename?: "IssueCommentConnection" } & {
+                      nodes?: Maybe<
+                        Array<
+                          Maybe<
+                            { __typename?: "IssueComment" } & Pick<
+                              IssueComment,
+                              "id" | "body" | "createdAt"
+                            >
+                          >
+                        >
+                      >;
+                    };
+                  }
+              >
+            >
+          >;
+        };
+    }
+  >;
+};
+
 export const GetCommitHistory = gql`
   query getCommitHistory(
     $name: String!
     $owner: String!
-    $since: GitTimestamp
+    $since: GitTimestamp!
   ) {
     repository(name: $name, owner: $owner) {
       defaultBranchRef {
@@ -20494,6 +20534,29 @@ export const GetCommitHistory = gql`
                 additions
                 deletions
               }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+export const GetIssueAndComments = gql`
+  query getIssueAndComments($name: String!, $owner: String!) {
+    repository(name: $name, owner: $owner) {
+      issues(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
+        totalCount
+        nodes {
+          id
+          body
+          closedAt
+          createdAt
+          state
+          comments(first: 100) {
+            nodes {
+              id
+              body
+              createdAt
             }
           }
         }
