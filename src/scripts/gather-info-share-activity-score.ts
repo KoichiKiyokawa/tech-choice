@@ -33,7 +33,7 @@ async function main() {
     let infoShareActivityScore = new Decimal(0)
     result.data?.repository?.issues.nodes?.forEach((issue) => {
       issue?.comments.nodes?.forEach((comment) => {
-        const eachCommentBodyLength = comment?.body.length ?? 0 // それぞれのコメントの文字数
+        const eachCommentBodyLength = comment?.body.length ?? 0 // それぞれのコメントの文字数 TODO: issueテンプレートは省いたほうが良い？
         const eachCommentElapsedDate = dayjs().diff(comment?.createdAt, 'day') // それぞれのコメントの経過日数
         infoShareActivityScore = infoShareActivityScore.plus(
           new Decimal(eachCommentBodyLength).dividedBy(new Decimal(eachCommentElapsedDate || 1)) // 0で割るのを防ぐ
