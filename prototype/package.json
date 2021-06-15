@@ -8,27 +8,27 @@
     "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@prisma/client": "2.21.2",
+    "@prisma/client": "2.24.1",
     "@urql/core": "^2.0.0",
     "dayjs": "^1.10.4",
     "decimal.js": "^10.2.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "1.21.4",
-    "@graphql-codegen/typescript": "1.22.0",
-    "@graphql-codegen/typescript-document-nodes": "1.17.11",
+    "@graphql-codegen/cli": "1.21.5",
+    "@graphql-codegen/typescript": "1.22.1",
+    "@graphql-codegen/typescript-document-nodes": "1.17.12",
     "@graphql-codegen/typescript-operations": "^1.17.16",
     "@types/decimal.js": "^7.4.0",
     "@types/node": "^15.0.1",
     "@types/node-fetch": "^2.5.10",
     "graphql": "^15.5.0",
     "husky": "^6.0.0",
-    "lint-staged": "^10.5.4",
+    "lint-staged": "^11.0.0",
     "prettier": "^2.2.1",
-    "prisma": "2.21.2",
-    "ts-node": "9.1.1",
-    "typescript": "4.2.3"
+    "prisma": "2.24.1",
+    "ts-node": "10.0.0",
+    "typescript": "4.3.2"
   },
   "volta": {
     "node": "14.16.1",
