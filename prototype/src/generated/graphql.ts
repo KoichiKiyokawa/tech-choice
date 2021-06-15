@@ -1,8 +1,6 @@
 import { gql } from '@urql/core'
 export type Maybe<T> = T | null
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K]
-}
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> }
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> }
 /** All built-in and custom scalars, mapped to their actual values */
@@ -20476,6 +20474,13 @@ export type GetIssueAndCommentsQueryVariables = Exact<{
 }>
 
 export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
+  organization?: Maybe<
+    { __typename?: 'Organization' } & {
+      membersWithRole: { __typename?: 'OrganizationMemberConnection' } & {
+        nodes?: Maybe<Array<Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'name'>>>>
+      }
+    }
+  >
   repository?: Maybe<
     { __typename?: 'Repository' } & {
       issues: { __typename?: 'IssueConnection' } & Pick<IssueConnection, 'totalCount'> & {
@@ -20493,7 +20498,18 @@ export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
                             { __typename?: 'IssueComment' } & Pick<
                               IssueComment,
                               'id' | 'body' | 'createdAt'
-                            >
+                            > & {
+                                author?: Maybe<
+                                  | ({ __typename?: 'Bot' } & Pick<Bot, 'login'>)
+                                  | ({ __typename?: 'EnterpriseUserAccount' } & Pick<
+                                      EnterpriseUserAccount,
+                                      'login'
+                                    >)
+                                  | ({ __typename?: 'Mannequin' } & Pick<Mannequin, 'login'>)
+                                  | ({ __typename?: 'Organization' } & Pick<Organization, 'login'>)
+                                  | ({ __typename?: 'User' } & Pick<User, 'login'>)
+                                >
+                              }
                           >
                         >
                       >
@@ -20530,6 +20546,14 @@ export const GetCommitHistory = gql`
 `
 export const GetIssueAndComments = gql`
   query getIssueAndComments($name: String!, $owner: String!) {
+    organization(login: $owner) {
+      membersWithRole(first: 100) {
+        nodes {
+          id
+          name
+        }
+      }
+    }
     repository(name: $name, owner: $owner) {
       issues(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
         totalCount
@@ -20544,6 +20568,9 @@ export const GetIssueAndComments = gql`
               id
               body
               createdAt
+              author {
+                login
+              }
             }
           }
         }

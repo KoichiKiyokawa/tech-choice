@@ -1,4 +1,13 @@
 query getIssueAndComments($name: String!, $owner: String!) {
+  organization(login: $owner) {
+    membersWithRole(first: 100) {
+      nodes {
+        id
+        name
+      }
+    }
+  }
+
   repository(name: $name, owner: $owner) {
     issues(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
       totalCount
@@ -13,6 +22,9 @@ query getIssueAndComments($name: String!, $owner: String!) {
             id
             body
             createdAt
+            author {
+              login
+            }
           }
         }
       }
