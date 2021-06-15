@@ -1,0 +1,32 @@
+{
+  "name": "tech-choice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/KoichiKiyokawa/tech-choice.git",
+  "author": "K.Kiyokawa <koichi20110068@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "volta": {
+    "node": "14.16.1",
+    "yarn": "1.22.10"
+  },
+  "lint-staged": {
+    "*.{js,ts,md,json}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.2.1"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 100
+  }
+}
