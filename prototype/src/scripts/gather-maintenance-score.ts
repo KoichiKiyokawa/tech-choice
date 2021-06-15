@@ -34,9 +34,44 @@ async function main() {
     let issueCommentByCollaboratorScore = new Decimal(0) // コラボレータによるissueコメントのスコア
     let abandonedScore = new Decimal(0) // どれくらい放置されているかを表す指標
 
+    const collaboratorUserNames =
+      result.data?.organization?.membersWithRole?.nodes?.flatMap((member) => member?.name ?? []) ??
+      []
+
     result.data?.repository?.issues.nodes?.forEach((issue) => {
-      issue?.comments.nodes?.forEach((comment) => {
-        // TODO
+      if (issue == null) return
+
+      if (issue.closedAt) {
+        // issue がどれくらい早く close されたか
+
+        issueCloseSpeedScore = issueCloseSpeedScore.plus(
+          new Decimal(1).dividedBy(
+            new Decimal(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1).dividedBy(
+              new Decimal(dayjs().diff(issue.closedAt, 'day') || 1)
+            )
+          )
+        )
+      } else {
+        // issue がどれくらい放置されているか
+        abandonedScore = abandonedScore.plus(
+          new Decimal(issue.comments.nodes?.length ?? 0).dividedBy(
+            new Decimal(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year')))
+          )
+        )
+      }
+
+      issue.comments.nodes?.forEach((comment) => {
+        if (comment == null) return
+
+        // コラボレータによるコメント
+        const commentedUsername = comment.author?.login
+        if (collaboratorUserNames.includes(commentedUsername ?? '')) {
+          issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
+            new Decimal(comment.body.length).dividedBy(
+              new Decimal(dayjs().diff(comment.createdAt, 'day') || 1) // (コメントの文字数) / (コメントされてからの経過日数)
+            )
+          )
+        }
       })
     })
 
@@ -45,6 +80,10 @@ async function main() {
       .minus(abandonedScore)
 
     console.log(`${name}: ${maintenanceScore}`)
+    // 2021/06/15
+    // svelte: 1198.1675907288450666
+    // react: 1332.2460925015563767
+    // vue: 3438.9746031743054658
   }
 }
 
