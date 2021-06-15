@@ -20477,7 +20477,7 @@ export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
   organization?: Maybe<
     { __typename?: 'Organization' } & {
       membersWithRole: { __typename?: 'OrganizationMemberConnection' } & {
-        nodes?: Maybe<Array<Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'name'>>>>
+        nodes?: Maybe<Array<Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'login'>>>>
       }
     }
   >
@@ -20550,7 +20550,7 @@ export const GetIssueAndComments = gql`
       membersWithRole(first: 100) {
         nodes {
           id
-          name
+          login
         }
       }
     }

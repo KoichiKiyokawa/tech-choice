@@ -34,9 +34,10 @@ async function main() {
     let issueCommentByCollaboratorScore = new Decimal(0) // コラボレータによるissueコメントのスコア
     let abandonedScore = new Decimal(0) // どれくらい放置されているかを表す指標
 
-    const collaboratorUserNames =
-      result.data?.organization?.membersWithRole?.nodes?.flatMap((member) => member?.name ?? []) ??
-      []
+    // コラボレータが100人を超えることを想定して、ページングを行う必要がある。
+    const collaboratorUserNameList =
+      result.data?.organization?.membersWithRole?.nodes?.flatMap((member) => member?.login ?? []) ??
+      [] // ユーザーネームは@以降の文字列。
 
     result.data?.repository?.issues.nodes?.forEach((issue) => {
       if (issue == null) return
@@ -45,17 +46,19 @@ async function main() {
         // issue がどれくらい早く close されたか
 
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
-          new Decimal(1).dividedBy(
-            new Decimal(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1).dividedBy(
-              new Decimal(dayjs().diff(issue.closedAt, 'day') || 1)
-            )
-          )
+          new Decimal(1)
+            .dividedBy(new Decimal(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1))
+            .dividedBy(new Decimal(dayjs().diff(issue.closedAt, 'day') || 1))
         )
       } else {
         // issue がどれくらい放置されているか
+
+        // そのissueのコメントの長さの合計
+        const sumOfCommentLength =
+          issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
-          new Decimal(issue.comments.nodes?.length ?? 0).dividedBy(
-            new Decimal(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year')))
+          new Decimal(sumOfCommentLength).dividedBy(
+            new Decimal(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day'))
           )
         )
       }
@@ -64,8 +67,7 @@ async function main() {
         if (comment == null) return
 
         // コラボレータによるコメント
-        const commentedUsername = comment.author?.login
-        if (collaboratorUserNames.includes(commentedUsername ?? '')) {
+        if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
             new Decimal(comment.body.length).dividedBy(
               new Decimal(dayjs().diff(comment.createdAt, 'day') || 1) // (コメントの文字数) / (コメントされてからの経過日数)
@@ -79,11 +81,13 @@ async function main() {
       .plus(issueCommentByCollaboratorScore)
       .minus(abandonedScore)
 
-    console.log(`${name}: ${maintenanceScore}`)
+    console.log(
+      `${name}: issueCloseSpeedScore ${issueCloseSpeedScore} issueCommentByCollaboratorScore: ${issueCommentByCollaboratorScore} abandonedScore: ${abandonedScore} maintenanceScore: ${maintenanceScore}`
+    )
     // 2021/06/15
-    // svelte: 1198.1675907288450666
-    // react: 1332.2460925015563767
-    // vue: 3438.9746031743054658
+    // svelte: issueCloseSpeedScore 7.3179761155025682246 issueCommentByCollaboratorScore: 2906.4107723263815099 abandonedScore: 109.1365376274718156 maintenanceScore: 2804.5922108144122625
+    // react: issueCloseSpeedScore 9.1227293358383321865 issueCommentByCollaboratorScore: 2947.0434065934065935 abandonedScore: 73.791852497685597002 maintenanceScore: 2882.3742834315593287
+    // vue: issueCloseSpeedScore 7.4475592059612232167 issueCommentByCollaboratorScore: 1194.7974797704577426 abandonedScore: 5.7447969465895921323 maintenanceScore: 1196.5002420298293737
   }
 }
 

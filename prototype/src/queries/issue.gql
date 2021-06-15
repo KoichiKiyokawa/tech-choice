@@ -3,7 +3,7 @@ query getIssueAndComments($name: String!, $owner: String!) {
     membersWithRole(first: 100) {
       nodes {
         id
-        name
+        login
       }
     }
   }
