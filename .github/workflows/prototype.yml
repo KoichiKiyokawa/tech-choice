@@ -1,0 +1,31 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+    paths: [prototype/**]
+  pull_request:
+    branches: [main]
+    paths: [prototype/**]
+
+jobs:
+  prototype:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: prototype
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.16.1
+      - run: yarn install --frozen-lockfile
+      - run: printenv ENV_TS | base64 -d > src/env.ts
+        env:
+          ENV_TS: ${{ secrets.ENV_TS }}
+      - run: yarn tsc --noEmit
+      - run: yarn test
