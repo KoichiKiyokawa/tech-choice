@@ -59,8 +59,8 @@ async function main() {
 
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
           new Decimal(1)
-            .dividedBy(new Decimal(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1))
-            .dividedBy(new Decimal(dayjs().diff(issue.closedAt, 'day') || 1))
+            .dividedBy(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1)
+            .dividedBy(dayjs().diff(issue.closedAt, 'day') || 1)
         )
       } else {
         // issue がどれくらい放置されているか
@@ -70,7 +70,7 @@ async function main() {
           issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
           new Decimal(sumOfCommentLength).dividedBy(
-            new Decimal(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day'))
+            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day')
           )
         )
       }
@@ -82,7 +82,7 @@ async function main() {
         if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
             new Decimal(comment.body.length).dividedBy(
-              new Decimal(dayjs().diff(comment.createdAt, 'day') || 1) // (コメントの文字数) / (コメントされてからの経過日数)
+              dayjs().diff(comment.createdAt, 'day') || 1 // (コメントの文字数) / (コメントされてからの経過日数)
             )
           )
         }
