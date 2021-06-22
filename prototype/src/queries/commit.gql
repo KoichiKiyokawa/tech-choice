@@ -1,15 +1,18 @@
-query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!) {
+query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!, $after: String) {
   repository(name: $name, owner: $owner) {
     defaultBranchRef {
       id
       target {
         ... on Commit {
-          history(since: $since) {
-            nodes {
-              id
-              pushedDate
-              additions
-              deletions
+          history(since: $since, after: $after) {
+            edges {
+              cursor
+              node {
+                id
+                pushedDate
+                additions
+                deletions
+              }
             }
           }
         }

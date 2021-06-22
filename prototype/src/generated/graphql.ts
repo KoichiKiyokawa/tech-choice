@@ -20436,6 +20436,7 @@ export type GetCommitHistoryQueryVariables = Exact<{
   name: Scalars['String']
   owner: Scalars['String']
   since: Scalars['GitTimestamp']
+  after?: Maybe<Scalars['String']>
 }>
 
 export type GetCommitHistoryQuery = { __typename?: 'Query' } & {
@@ -20447,13 +20448,17 @@ export type GetCommitHistoryQuery = { __typename?: 'Query' } & {
               | { __typename?: 'Blob' }
               | ({ __typename?: 'Commit' } & {
                   history: { __typename?: 'CommitHistoryConnection' } & {
-                    nodes?: Maybe<
+                    edges?: Maybe<
                       Array<
                         Maybe<
-                          { __typename?: 'Commit' } & Pick<
-                            Commit,
-                            'id' | 'pushedDate' | 'additions' | 'deletions'
-                          >
+                          { __typename?: 'CommitEdge' } & Pick<CommitEdge, 'cursor'> & {
+                              node?: Maybe<
+                                { __typename?: 'Commit' } & Pick<
+                                  Commit,
+                                  'id' | 'pushedDate' | 'additions' | 'deletions'
+                                >
+                              >
+                            }
                         >
                       >
                     >
@@ -20524,18 +20529,21 @@ export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
 }
 
 export const GetCommitHistory = gql`
-  query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!) {
+  query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!, $after: String) {
     repository(name: $name, owner: $owner) {
       defaultBranchRef {
         id
         target {
           ... on Commit {
-            history(since: $since) {
-              nodes {
-                id
-                pushedDate
-                additions
-                deletions
+            history(since: $since, after: $after) {
+              edges {
+                cursor
+                node {
+                  id
+                  pushedDate
+                  additions
+                  deletions
+                }
               }
             }
           }

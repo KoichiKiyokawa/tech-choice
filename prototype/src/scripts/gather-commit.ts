@@ -31,8 +31,9 @@ async function main() {
       .toPromise()
     const target = result.data?.repository?.defaultBranchRef?.target
     if (target?.__typename === 'Commit') {
-      const score = target.history.nodes
-        ?.flatMap((commit) => {
+      const score = target.history.edges
+        ?.flatMap((edge) => {
+          const commit = edge?.node
           if (commit == null) return []
 
           return new Decimal(commit.additions + commit.deletions).dividedBy(
@@ -41,8 +42,7 @@ async function main() {
         })
         .reduce((sum, c) => sum.plus(c), new Decimal(0))
 
-      console.log(`${name}: ${score}, commitCount: ${target.history.nodes?.length}`)
-      console.log(target.history.nodes?.slice(-1)[0])
+      console.log(`${name}: ${score}, commitCount: ${target.history.edges?.length}`)
     }
   }
 }
