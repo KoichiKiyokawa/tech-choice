@@ -24,5 +24,8 @@ jobs:
         with:
           node-version: 14.16.1
       - run: yarn install --frozen-lockfile
+      - run: printenv ENV_TS > src/env.ts
+        env:
+          ENV_TS: ${{ secrets.ENV_TS }}
       - run: yarn tsc --noEmit
       - run: yarn test
