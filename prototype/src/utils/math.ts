@@ -8,3 +8,11 @@ import { Decimal } from 'decimal.js'
  */
 export const normalize = ({ target, min, max }: { target: Decimal; min: Decimal; max: Decimal }) =>
   target.minus(min).dividedBy(max.minus(min))
+
+/**
+ * @param target 正規化をする対象
+ * @param list targetを含む集合
+ * @returns
+ */
+export const normalizeFromList = ({ target, list }: { target: Decimal; list: Decimal[] }) =>
+  normalize({ target, min: Decimal.min(...list), max: Decimal.max(...list) })
