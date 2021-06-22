@@ -11,7 +11,7 @@ import { Decimal } from 'decimal.js'
 const prisma = new PrismaClient()
 
 /**
- * 与えられたフレームワークの、直近1年のコミットとを収集する
+ * 与えられたフレームワークの、直近1年のコミットとを収集する。
  * @example `ts-node scripts/gather-commit.ts`
  */
 async function main() {
