@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "fmt": "prettier --write . --ignore-path .gitignore",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "test": "jest"
   },
   "dependencies": {
     "@prisma/client": "2.24.1",
@@ -19,15 +20,21 @@
     "@graphql-codegen/typescript-document-nodes": "1.17.12",
     "@graphql-codegen/typescript-operations": "^1.17.16",
     "@types/decimal.js": "^7.4.0",
+    "@types/jest": "^26.0.23",
     "@types/node": "^15.0.1",
     "@types/node-fetch": "^2.5.10",
     "graphql": "^15.5.0",
+    "jest": "^27.0.4",
     "prisma": "2.24.1",
+    "ts-jest": "^27.0.3",
     "ts-node": "10.0.0",
     "typescript": "4.3.2"
   },
   "volta": {
     "node": "14.16.1",
     "yarn": "1.22.10"
+  },
+  "jest": {
+    "preset": "ts-jest"
   }
 }
