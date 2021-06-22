@@ -5,7 +5,8 @@
   "scripts": {
     "fmt": "prettier --write . --ignore-path .gitignore",
     "codegen": "graphql-codegen --config codegen.yml",
-    "test": "jest"
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/client": "2.24.1",
