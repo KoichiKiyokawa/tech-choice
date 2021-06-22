@@ -149,39 +149,37 @@ async function main() {
   // 2021/06/22
   // Framework name: svelte
   //       ==unnormalized scores==
-  //       issueCloseSpeedScore: 5.9530875754746154091
-  //       issueCommentByCollaboratorScore: 2847.9565746168499023
-  //       abandonedScore: 132.95717083849159692
+  //       issueCloseSpeedScore: 6.9417862593660476108
+  //       issueCommentByCollaboratorScore: 3411.949029725736052
+  //       abandonedScore: 130.50284504228300151
 
   //       ==normalized scores==
-  //       issueCloseSpeedScore: 0.41614365024428782792
+  //       issueCloseSpeedScore: 1
   //       issueCommentByCollaboratorScore: 1
   //       abandonedScore: 1
 
   //       ==maintenanceScore==
-  //       0.13871455008142927597
+  //       0.33333333333333333333
   //       --------------------------------------------
 
   // Framework name: react
   //       ==unnormalized scores==
-  //       issueCloseSpeedScore: 6.8289938570296604849
+  //       issueCloseSpeedScore: 6.8272745549601886361
   //       issueCommentByCollaboratorScore: 2497.9160628928430786
-  //       abandonedScore: 58.014450009019051416
-
+  //       abandonedScore: 58.030987053636325259
   //       ==normalized scores==
-  //       issueCloseSpeedScore: 1
-  //       issueCommentByCollaboratorScore: 0.81268609739992062424
-  //       abandonedScore: 0.42440887554327037192
-
+  //       issueCloseSpeedScore: 0.93015200764259765388
+  //       issueCommentByCollaboratorScore: 0.62434576978961364312
+  //       abandonedScore: 0.4310158733884520542
   //       ==maintenanceScore==
-  //       0.46275907395221675077
+  //       0.37449396801458641427
   //       --------------------------------------------
 
   // Framework name: vue
   //       ==unnormalized scores==
-  //       issueCloseSpeedScore: 5.3287853178546943117
-  //       issueCommentByCollaboratorScore: 979.21908708847628105
-  //       abandonedScore: 2.7558566674173610589
+  //       issueCloseSpeedScore: 5.302344658526345587
+  //       issueCommentByCollaboratorScore: 978.77273800399534984
+  //       abandonedScore: 3.1322302937909874326
 
   //       ==normalized scores==
   //       issueCloseSpeedScore: 0
