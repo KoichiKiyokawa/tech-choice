@@ -1,29 +1,23 @@
-query getIssueAndComments($name: String!, $owner: String!) {
-  organization(login: $owner) {
-    membersWithRole(first: 100) {
-      nodes {
-        id
-        login # そのorganizationに属しているusernameを表す
-      }
-    }
-  }
-
+query getIssueAndComments($name: String!, $owner: String!, $after: String) {
   repository(name: $name, owner: $owner) {
-    issues(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
+    issues(first: 100, after: $after, orderBy: { field: CREATED_AT, direction: DESC }) {
       totalCount
-      nodes {
-        id
-        body
-        closedAt
-        createdAt
-        state
-        comments(first: 100) {
-          nodes {
-            id
-            body
-            createdAt
-            author {
-              login # そのコメントを行ったusernameを表す
+      edges {
+        cursor
+        node {
+          id
+          body
+          closedAt
+          createdAt
+          state
+          comments(first: 100) {
+            nodes {
+              id
+              body
+              createdAt
+              author {
+                login
+              }
             }
           }
         }

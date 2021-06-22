@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import {
+  GetCollaborators,
+  GetCollaboratorsQuery,
+  GetCollaboratorsQueryVariables,
   GetIssueAndComments,
   GetIssueAndCommentsQuery,
   GetIssueAndCommentsQueryVariables,
@@ -23,7 +26,13 @@ async function main() {
   ]
 
   for (const { name, owner } of nameWithOwnerList) {
-    const result = await urql
+    const collaboratorResult = await urql
+      .query<GetCollaboratorsQuery, GetCollaboratorsQueryVariables>(GetCollaborators, {
+        owner,
+      })
+      .toPromise()
+
+    const issueResult = await urql
       .query<GetIssueAndCommentsQuery, GetIssueAndCommentsQueryVariables>(GetIssueAndComments, {
         name,
         owner,
@@ -36,10 +45,12 @@ async function main() {
 
     // コラボレータが100人を超えることを想定して、ページングを行う必要がある。
     const collaboratorUserNameList =
-      result.data?.organization?.membersWithRole?.nodes?.flatMap((member) => member?.login ?? []) ??
-      [] // ユーザーネームは@以降の文字列。
+      collaboratorResult.data?.organization?.membersWithRole.edges?.flatMap(
+        (edge) => edge?.node?.login ?? []
+      ) ?? [] // ユーザーネームは@以降の文字列。
 
-    result.data?.repository?.issues.nodes?.forEach((issue) => {
+    issueResult.data?.repository?.issues.edges?.forEach((edge) => {
+      const issue = edge?.node
       if (issue == null) return
 
       if (issue.closedAt) {

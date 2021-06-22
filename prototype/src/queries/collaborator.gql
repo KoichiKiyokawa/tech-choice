@@ -1,0 +1,13 @@
+query getCollaborators($owner: String!, $after: String) {
+  organization(login: $owner) {
+    membersWithRole(first: 100, after: $after) {
+      edges {
+        cursor
+        node {
+          id
+          login # そのorganizationに属しているusernameを表す
+        }
+      }
+    }
+  }
+}

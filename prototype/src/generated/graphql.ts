@@ -20432,6 +20432,29 @@ export type ViewerHovercardContext = HovercardContext & {
   viewer: User
 }
 
+export type GetCollaboratorsQueryVariables = Exact<{
+  owner: Scalars['String']
+  after?: Maybe<Scalars['String']>
+}>
+
+export type GetCollaboratorsQuery = { __typename?: 'Query' } & {
+  organization?: Maybe<
+    { __typename?: 'Organization' } & {
+      membersWithRole: { __typename?: 'OrganizationMemberConnection' } & {
+        edges?: Maybe<
+          Array<
+            Maybe<
+              { __typename?: 'OrganizationMemberEdge' } & Pick<OrganizationMemberEdge, 'cursor'> & {
+                  node?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'login'>>
+                }
+            >
+          >
+        >
+      }
+    }
+  >
+}
+
 export type GetCommitHistoryQueryVariables = Exact<{
   name: Scalars['String']
   owner: Scalars['String']
@@ -20476,49 +20499,50 @@ export type GetCommitHistoryQuery = { __typename?: 'Query' } & {
 export type GetIssueAndCommentsQueryVariables = Exact<{
   name: Scalars['String']
   owner: Scalars['String']
+  after?: Maybe<Scalars['String']>
 }>
 
 export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
-  organization?: Maybe<
-    { __typename?: 'Organization' } & {
-      membersWithRole: { __typename?: 'OrganizationMemberConnection' } & {
-        nodes?: Maybe<Array<Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'login'>>>>
-      }
-    }
-  >
   repository?: Maybe<
     { __typename?: 'Repository' } & {
       issues: { __typename?: 'IssueConnection' } & Pick<IssueConnection, 'totalCount'> & {
-          nodes?: Maybe<
+          edges?: Maybe<
             Array<
               Maybe<
-                { __typename?: 'Issue' } & Pick<
-                  Issue,
-                  'id' | 'body' | 'closedAt' | 'createdAt' | 'state'
-                > & {
-                    comments: { __typename?: 'IssueCommentConnection' } & {
-                      nodes?: Maybe<
-                        Array<
-                          Maybe<
-                            { __typename?: 'IssueComment' } & Pick<
-                              IssueComment,
-                              'id' | 'body' | 'createdAt'
-                            > & {
-                                author?: Maybe<
-                                  | ({ __typename?: 'Bot' } & Pick<Bot, 'login'>)
-                                  | ({ __typename?: 'EnterpriseUserAccount' } & Pick<
-                                      EnterpriseUserAccount,
-                                      'login'
-                                    >)
-                                  | ({ __typename?: 'Mannequin' } & Pick<Mannequin, 'login'>)
-                                  | ({ __typename?: 'Organization' } & Pick<Organization, 'login'>)
-                                  | ({ __typename?: 'User' } & Pick<User, 'login'>)
+                { __typename?: 'IssueEdge' } & Pick<IssueEdge, 'cursor'> & {
+                    node?: Maybe<
+                      { __typename?: 'Issue' } & Pick<
+                        Issue,
+                        'id' | 'body' | 'closedAt' | 'createdAt' | 'state'
+                      > & {
+                          comments: { __typename?: 'IssueCommentConnection' } & {
+                            nodes?: Maybe<
+                              Array<
+                                Maybe<
+                                  { __typename?: 'IssueComment' } & Pick<
+                                    IssueComment,
+                                    'id' | 'body' | 'createdAt'
+                                  > & {
+                                      author?: Maybe<
+                                        | ({ __typename?: 'Bot' } & Pick<Bot, 'login'>)
+                                        | ({ __typename?: 'EnterpriseUserAccount' } & Pick<
+                                            EnterpriseUserAccount,
+                                            'login'
+                                          >)
+                                        | ({ __typename?: 'Mannequin' } & Pick<Mannequin, 'login'>)
+                                        | ({ __typename?: 'Organization' } & Pick<
+                                            Organization,
+                                            'login'
+                                          >)
+                                        | ({ __typename?: 'User' } & Pick<User, 'login'>)
+                                      >
+                                    }
                                 >
-                              }
-                          >
-                        >
-                      >
-                    }
+                              >
+                            >
+                          }
+                        }
+                    >
                   }
               >
             >
@@ -20528,6 +20552,21 @@ export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
   >
 }
 
+export const GetCollaborators = gql`
+  query getCollaborators($owner: String!, $after: String) {
+    organization(login: $owner) {
+      membersWithRole(first: 100, after: $after) {
+        edges {
+          cursor
+          node {
+            id
+            login
+          }
+        }
+      }
+    }
+  }
+`
 export const GetCommitHistory = gql`
   query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!, $after: String) {
     repository(name: $name, owner: $owner) {
@@ -20553,31 +20592,26 @@ export const GetCommitHistory = gql`
   }
 `
 export const GetIssueAndComments = gql`
-  query getIssueAndComments($name: String!, $owner: String!) {
-    organization(login: $owner) {
-      membersWithRole(first: 100) {
-        nodes {
-          id
-          login
-        }
-      }
-    }
+  query getIssueAndComments($name: String!, $owner: String!, $after: String) {
     repository(name: $name, owner: $owner) {
-      issues(first: 100, orderBy: { field: CREATED_AT, direction: DESC }) {
+      issues(first: 100, after: $after, orderBy: { field: CREATED_AT, direction: DESC }) {
         totalCount
-        nodes {
-          id
-          body
-          closedAt
-          createdAt
-          state
-          comments(first: 100) {
-            nodes {
-              id
-              body
-              createdAt
-              author {
-                login
+        edges {
+          cursor
+          node {
+            id
+            body
+            closedAt
+            createdAt
+            state
+            comments(first: 100) {
+              nodes {
+                id
+                body
+                createdAt
+                author {
+                  login
+                }
               }
             }
           }
