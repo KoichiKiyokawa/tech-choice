@@ -1,3 +1,4 @@
+import fs from 'fs'
 import {
   GetIssueAndComments,
   GetIssueAndCommentsQuery,
@@ -20,7 +21,8 @@ export async function getIssueAndComments({
   let dataList: Issue[] = []
   const cursor: { value: string | undefined } = { value: undefined } // letだとなぜかファイル全体に型エラーが出るため、constで避ける
 
-  while (true) {
+  loop: while (true) {
+    console.log(cursor.value)
     const result = await urql
       .query<GetIssueAndCommentsQuery, GetIssueAndCommentsQueryVariables>(GetIssueAndComments, {
         name,
@@ -34,14 +36,21 @@ export async function getIssueAndComments({
 
     const data = issueEdges.flatMap((edge) => edge?.node ?? [])
 
-    // 直近1年のissueのみをデータに追加
-    dataList = dataList.concat(data.filter((d) => withinOneYear(d.createdAt)))
-
-    // 直近1年以外のデータが混じっていれば処理終了(新しい順にデータが取得できるようにクエリを書いている前提)
-    if (data.some((d) => !withinOneYear(d?.closedAt))) break
+    for (const d of data) {
+      // 直近1年のissueのみをデータに追加
+      if (withinOneYear(d.createdAt)) dataList.push(d)
+      else break loop // 直近1年以外のデータが混じっていれば処理終了(新しい順にデータが取得できるようにクエリを書いている前提)
+    }
 
     cursor.value = result.data?.repository?.issues.edges?.splice(-1)[0]?.cursor
   }
 
   return dataList
 }
+
+getIssueAndComments({ name: 'svelte', owner: 'sveltejs' })
+  .then((res) => {
+    console.log(res.length)
+    fs.writeFileSync('res.json', JSON.stringify(res))
+  })
+  .catch(console.error)
