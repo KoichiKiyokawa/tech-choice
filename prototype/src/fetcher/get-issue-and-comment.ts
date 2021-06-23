@@ -1,4 +1,3 @@
-import fs from 'fs'
 import {
   GetIssueAndComments,
   GetIssueAndCommentsQuery,
@@ -22,7 +21,6 @@ export async function getIssueAndComments({
   const cursor: { value: string | undefined } = { value: undefined } // letだとなぜかファイル全体に型エラーが出るため、constで避ける
 
   loop: while (true) {
-    console.log(cursor.value)
     const result = await urql
       .query<GetIssueAndCommentsQuery, GetIssueAndCommentsQueryVariables>(GetIssueAndComments, {
         name,
@@ -48,9 +46,9 @@ export async function getIssueAndComments({
   return dataList
 }
 
-getIssueAndComments({ name: 'svelte', owner: 'sveltejs' })
-  .then((res) => {
-    console.log(res.length)
-    fs.writeFileSync('res.json', JSON.stringify(res))
-  })
-  .catch(console.error)
+// getIssueAndComments({ name: 'svelte', owner: 'sveltejs' })
+//   .then((res) => {
+//     console.log(res.length)
+//     fs.writeFileSync('res.json', JSON.stringify(res))
+//   })
+//   .catch(console.error)
