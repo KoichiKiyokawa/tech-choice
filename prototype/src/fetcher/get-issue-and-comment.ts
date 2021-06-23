@@ -18,14 +18,14 @@ export async function getIssueAndComments({
   owner: string
 }): Promise<Issue[]> {
   let dataList: Issue[] = []
-  const d: { cursor: string | undefined } = { cursor: undefined } // letだとなぜかファイル全体に型エラーが出るため、constで避ける
+  const cursor: { value: string | undefined } = { value: undefined } // letだとなぜかファイル全体に型エラーが出るため、constで避ける
 
   while (true) {
     const result = await urql
       .query<GetIssueAndCommentsQuery, GetIssueAndCommentsQueryVariables>(GetIssueAndComments, {
         name,
         owner,
-        after: d.cursor,
+        after: cursor.value,
       })
       .toPromise()
 
@@ -40,7 +40,7 @@ export async function getIssueAndComments({
     // 直近1年以外のデータが混じっていれば処理終了(新しい順にデータが取得できるようにクエリを書いている前提)
     if (data.some((d) => !withinOneYear(d?.closedAt))) break
 
-    d.cursor = result.data?.repository?.issues.edges?.splice(-1)[0]?.cursor
+    cursor.value = result.data?.repository?.issues.edges?.splice(-1)[0]?.cursor
   }
 
   return dataList
