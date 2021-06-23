@@ -7,6 +7,7 @@ import {
 import { urql } from '../modules/urql'
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
+import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 
 const prisma = new PrismaClient()
 
@@ -16,13 +17,7 @@ const prisma = new PrismaClient()
  * それぞれのissueの、コメントについて、「コメントの文字数 ÷ 経過日数」を計算し、足し上げる。
  */
 async function main() {
-  const nameWithOwnerList: { name: string; owner: string }[] = [
-    { name: 'svelte', owner: 'sveltejs' },
-    { name: 'react', owner: 'facebook' },
-    { name: 'vue', owner: 'vuejs' },
-  ]
-
-  for (const { name, owner } of nameWithOwnerList) {
+  for (const { name, owner } of FRAMEWORK_WITH_OWNER_LIST) {
     const result = await urql
       .query<GetIssueAndCommentsQuery, GetIssueAndCommentsQueryVariables>(GetIssueAndComments, {
         name,
