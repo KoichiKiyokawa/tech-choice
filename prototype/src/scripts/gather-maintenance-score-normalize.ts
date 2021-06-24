@@ -1,10 +1,3 @@
-import { PrismaClient } from '@prisma/client'
-import {
-  GetCollaborators,
-  GetCollaboratorsQuery,
-  GetCollaboratorsQueryVariables,
-} from '../generated/graphql'
-import { urql } from '../modules/urql'
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
 import { normalizeFromList } from '../utils/math'
@@ -12,8 +5,7 @@ import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-li
 import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 import { saveResultToFile } from '../utils/file'
 import { MarkdownTable } from '../utils/table'
-
-const prisma = new PrismaClient()
+import { fetchCollaborators } from '../fetcher/fetch-collaborators'
 
 type Scores = {
   issueCloseSpeedScore: Decimal
@@ -30,23 +22,23 @@ async function main() {
   // 最後に正規化を行うために、各フレームワークの点数を格納しておく
   const frameworkWithScoreMap: Map<Frameworks, Scores> = new Map()
 
-  for (const { name, owner } of FRAMEWORK_WITH_OWNER_LIST) {
-    const collaboratorResult = await urql
-      .query<GetCollaboratorsQuery, GetCollaboratorsQueryVariables>(GetCollaborators, {
-        owner,
-      })
-      .toPromise()
-    const issueList = await fetchIssueAndComments({ name, owner })
+  // 並列処理
+  const [allFrameworkCollaboratorList, allFrameworkIssuesList] = await Promise.all([
+    Promise.all(FRAMEWORK_WITH_OWNER_LIST.map(({ owner }) => fetchCollaborators({ owner }))),
+    Promise.all(FRAMEWORK_WITH_OWNER_LIST.map((fwo) => fetchIssueAndComments(fwo))),
+  ])
+
+  for (let i = 0; i < FRAMEWORK_WITH_OWNER_LIST.length; i++) {
+    const { name } = FRAMEWORK_WITH_OWNER_LIST[i]
+
+    const issueList = allFrameworkIssuesList[i]
 
     let issueCloseSpeedScore = new Decimal(0) // issueがどれくらい早くcloseされたかのスコア
     let issueCommentByCollaboratorScore = new Decimal(0) // コラボレータによるissueコメントのスコア
     let abandonedScore = new Decimal(0) // どれくらい放置されているかを表す指標
 
     // TODO: コラボレータが100人を超えることを想定して、ページングを行う必要がある。
-    const collaboratorUserNameList =
-      collaboratorResult.data?.organization?.membersWithRole?.edges?.flatMap(
-        (edge) => edge?.node?.login ?? []
-      ) ?? [] // ユーザーネームは@以降の文字列。
+    const collaboratorUserNameList = allFrameworkCollaboratorList[i]
 
     issueList.forEach((issue) => {
       if (issue == null) return
@@ -143,7 +135,7 @@ async function main() {
     })
 
     saveResultToFile(
-      `${unnormalizedScoresTable}\n${normalizedScoresTable}`,
+      `${unnormalizedScoresTable}\n\n${normalizedScoresTable}`,
       'gather-maintenance-score-normalize'
     )
   }
@@ -153,6 +145,4 @@ main()
   .catch((e) => {
     throw e
   })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+  .finally(async () => {})
