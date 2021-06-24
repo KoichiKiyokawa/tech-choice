@@ -5,32 +5,32 @@ maintenanceScoreは3で割っていない。
 
 Framework name: svelte
       ==unnormalized scores==
-      issueCloseSpeedScore: 6.8240228177578764203
-      issueCommentByCollaboratorScore: 5416.0281592224922038
-      abandonedScore: 4732.8603557187420998
+      issueCloseSpeedScore: 6.7721842159677782657
+      issueCommentByCollaboratorScore: 5400.7890545893641845
+      abandonedScore: 4732.8783287697308969
 
       ==normalized scores==
       issueCloseSpeedScore: 0
       issueCommentByCollaboratorScore: 1
-      abandonedScore: 0.83149278043711122001
+      abandonedScore: 0.8314920687665146445
 
       ==maintenanceScore==
-      0.16850721956288877999
+      0.1685079312334853555
       --------------------------------------------
     
 Framework name: react
       ==unnormalized scores==
       issueCloseSpeedScore: 14.216785769903288053
-      issueCommentByCollaboratorScore: 3446.3521147070062534
-      abandonedScore: 5502.9992934251608091
+      issueCommentByCollaboratorScore: 3446.2937762200963379
+      abandonedScore: 5503.0248205995063172
 
       ==normalized scores==
       issueCloseSpeedScore: 1
-      issueCommentByCollaboratorScore: 0.44856046077663246132
+      issueCommentByCollaboratorScore: 0.45046600054733990446
       abandonedScore: 1
 
       ==maintenanceScore==
-      0.4485604607766324613
+      0.4504660005473399045
       --------------------------------------------
     
 Framework name: vue
@@ -40,12 +40,12 @@ Framework name: vue
       abandonedScore: 932.63762165717914332
 
       ==normalized scores==
-      issueCloseSpeedScore: 0.2604748218572962574
+      issueCloseSpeedScore: 0.26562431856920894857
       issueCommentByCollaboratorScore: 0
       abandonedScore: 0
 
       ==maintenanceScore==
-      0.2604748218572962574
+      0.26562431856920894857
       --------------------------------------------
     
-✨  Done in 55.28s.
+✨  Done in 54.14s.

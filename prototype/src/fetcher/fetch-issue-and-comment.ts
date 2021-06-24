@@ -5,6 +5,7 @@ import {
 } from '../generated/graphql'
 import { urql } from '../modules/urql'
 import { withinOneYear } from '../utils/date'
+import { last } from 'rhodash'
 
 type Issue = NonNullable<
   NonNullable<NonNullable<GetIssueAndCommentsQuery['repository']>['issues']['edges']>[number]
@@ -40,7 +41,7 @@ export async function fetchIssueAndComments({
       else break loop // 直近1年以外のデータが混じっていれば処理終了(新しい順にデータが取得できるようにクエリを書いている前提)
     }
 
-    cursor.value = result.data?.repository?.issues.edges?.splice(-1)[0]?.cursor
+    cursor.value = last(issueEdges)?.cursor
   }
 
   return dataList
