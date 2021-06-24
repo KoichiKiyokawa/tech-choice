@@ -10,6 +10,7 @@ import { Decimal } from 'decimal.js'
 import { normalizeFromList } from '../utils/math'
 import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
+import { saveResultToFile } from '../utils/file'
 
 const prisma = new PrismaClient()
 
@@ -92,9 +93,20 @@ async function main() {
   } // end of each framework loop
 
   // show result of each framework
+  const headers = [
+    '| Framework name | issueCloseSpeedScore | issueCommentByCollaboratorScore | abandonedScore | maintenanceScore |',
+    '|---|---|---|---|---|',
+  ]
+  const unnormalizedScoresTable: string[] = [...headers]
+  const normalizedScoresTable: string[] = [...headers]
+
   for (const { name } of FRAMEWORK_WITH_OWNER_LIST) {
     const thisFrameworkScores = frameworkWithScoreMap.get(name)
     if (thisFrameworkScores === undefined) continue
+
+    unnormalizedScoresTable.push(
+      `| ${name} | ${thisFrameworkScores.issueCloseSpeedScore} | ${thisFrameworkScores.issueCommentByCollaboratorScore} | ${thisFrameworkScores.abandonedScore} | - |`
+    )
 
     const normalizedIssueCloseSpeedScore = normalizeFromList({
       target: thisFrameworkScores.issueCloseSpeedScore,
@@ -115,21 +127,19 @@ async function main() {
       .plus(normalizedIssueCommentByCollaboratorScore)
       .minus(normalizedAbandonedScore)
 
-    console.log(`Framework name: ${name}
-      ==unnormalized scores==
-      issueCloseSpeedScore: ${thisFrameworkScores.issueCloseSpeedScore}
-      issueCommentByCollaboratorScore: ${thisFrameworkScores.issueCommentByCollaboratorScore}
-      abandonedScore: ${thisFrameworkScores.abandonedScore}
+    normalizedScoresTable.push(
+      `| ${name} | ${normalizedIssueCloseSpeedScore} | ${normalizedIssueCommentByCollaboratorScore} | ${normalizedAbandonedScore} | ${maintenanceScore} |`
+    )
 
-      ==normalized scores==
-      issueCloseSpeedScore: ${normalizedIssueCloseSpeedScore}
-      issueCommentByCollaboratorScore: ${normalizedIssueCommentByCollaboratorScore}
-      abandonedScore: ${normalizedAbandonedScore}
+    const result = `# UnnormalizedScores
 
-      ==maintenanceScore==
-      ${maintenanceScore}
-      --------------------------------------------
-    `)
+${unnormalizedScoresTable.join('\n')}
+
+# NormalizedScores
+
+${normalizedScoresTable.join('\n')}`
+
+    saveResultToFile(result, 'gather-maintenance-score-normalize')
   }
 }
 
