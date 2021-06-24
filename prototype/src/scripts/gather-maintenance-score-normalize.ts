@@ -19,26 +19,23 @@ type Scores = {
  * @see /images/maintenance.png
  */
 async function main() {
-  // 最後に正規化を行うために、各フレームワークの点数を格納しておく
-  const frameworkWithScoreMap: Map<Frameworks, Scores> = new Map()
-
-  // 並列処理
+  // 並列処理ですべてのフレームワークのデータを取得しておく
   const [allFrameworkCollaboratorList, allFrameworkIssuesList] = await Promise.all([
     Promise.all(FRAMEWORK_WITH_OWNER_LIST.map(({ owner }) => fetchCollaborators({ owner }))),
     Promise.all(FRAMEWORK_WITH_OWNER_LIST.map((fwo) => fetchIssueAndComments(fwo))),
   ])
 
-  for (let i = 0; i < FRAMEWORK_WITH_OWNER_LIST.length; i++) {
-    const { name } = FRAMEWORK_WITH_OWNER_LIST[i]
+  // 最後に正規化を行うために、各フレームワークの点数を格納しておくMap
+  const frameworkWithScoreMap: Map<Frameworks, Scores> = new Map()
 
+  // 各フレームワークの issueCloseSpeedScore, issueCommentByCollaboratorScore, abandonedScore を計算
+  FRAMEWORK_WITH_OWNER_LIST.forEach(({ name }, i) => {
+    const collaboratorUserNameList = allFrameworkCollaboratorList[i]
     const issueList = allFrameworkIssuesList[i]
 
     let issueCloseSpeedScore = new Decimal(0) // issueがどれくらい早くcloseされたかのスコア
     let issueCommentByCollaboratorScore = new Decimal(0) // コラボレータによるissueコメントのスコア
     let abandonedScore = new Decimal(0) // どれくらい放置されているかを表す指標
-
-    // TODO: コラボレータが100人を超えることを想定して、ページングを行う必要がある。
-    const collaboratorUserNameList = allFrameworkCollaboratorList[i]
 
     issueList.forEach((issue) => {
       if (issue == null) return
@@ -83,7 +80,7 @@ async function main() {
       issueCommentByCollaboratorScore,
       abandonedScore,
     })
-  } // end of each framework loop
+  }) // end of each framework loop
 
   // show result of each framework
   const headers = [
@@ -141,8 +138,4 @@ async function main() {
   }
 }
 
-main()
-  .catch((e) => {
-    throw e
-  })
-  .finally(async () => {})
+main().catch(console.error)
