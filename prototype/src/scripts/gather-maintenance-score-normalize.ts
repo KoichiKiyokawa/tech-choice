@@ -3,14 +3,13 @@ import {
   GetCollaborators,
   GetCollaboratorsQuery,
   GetCollaboratorsQueryVariables,
-  GetIssueAndComments,
-  GetIssueAndCommentsQuery,
-  GetIssueAndCommentsQueryVariables,
 } from '../generated/graphql'
 import { urql } from '../modules/urql'
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
 import { normalizeFromList } from '../utils/math'
+import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
+import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 
 const prisma = new PrismaClient()
 
@@ -19,14 +18,6 @@ type Scores = {
   issueCommentByCollaboratorScore: Decimal
   abandonedScore: Decimal
 }
-
-const nameWithOwnerList = [
-  { name: 'svelte', owner: 'sveltejs' },
-  { name: 'react', owner: 'facebook' },
-  { name: 'vue', owner: 'vuejs' },
-] as const
-
-type Frameworks = typeof nameWithOwnerList[number]['name']
 
 /**
  * メンテナンスがされているかの指標(maintenance)を計算。正規化バージョン
@@ -37,18 +28,13 @@ async function main() {
   // 最後に正規化を行うために、各フレームワークの点数を格納しておく
   const frameworkWithScoreMap: Map<Frameworks, Scores> = new Map()
 
-  for (const { name, owner } of nameWithOwnerList) {
+  for (const { name, owner } of FRAMEWORK_WITH_OWNER_LIST) {
     const collaboratorResult = await urql
       .query<GetCollaboratorsQuery, GetCollaboratorsQueryVariables>(GetCollaborators, {
         owner,
       })
       .toPromise()
-    const issueResult = await urql
-      .query<GetIssueAndCommentsQuery, GetIssueAndCommentsQueryVariables>(GetIssueAndComments, {
-        name,
-        owner,
-      })
-      .toPromise()
+    const issueList = await fetchIssueAndComments({ name, owner })
 
     let issueCloseSpeedScore = new Decimal(0) // issueがどれくらい早くcloseされたかのスコア
     let issueCommentByCollaboratorScore = new Decimal(0) // コラボレータによるissueコメントのスコア
@@ -60,8 +46,7 @@ async function main() {
         (edge) => edge?.node?.login ?? []
       ) ?? [] // ユーザーネームは@以降の文字列。
 
-    issueResult.data?.repository?.issues.edges?.forEach((edge) => {
-      const issue = edge?.node
+    issueList.forEach((issue) => {
       if (issue == null) return
 
       if (issue.closedAt) {
@@ -107,7 +92,7 @@ async function main() {
   } // end of each framework loop
 
   // show result of each framework
-  for (const { name } of nameWithOwnerList) {
+  for (const { name } of FRAMEWORK_WITH_OWNER_LIST) {
     const thisFrameworkScores = frameworkWithScoreMap.get(name)
     if (thisFrameworkScores === undefined) continue
 
@@ -126,6 +111,10 @@ async function main() {
       list: Array.from(frameworkWithScoreMap.values()).map((v) => v.abandonedScore),
     })
 
+    const maintenanceScore = normalizedIssueCloseSpeedScore
+      .plus(normalizedIssueCommentByCollaboratorScore)
+      .minus(normalizedAbandonedScore)
+
     console.log(`Framework name: ${name}
       ==unnormalized scores==
       issueCloseSpeedScore: ${thisFrameworkScores.issueCloseSpeedScore}
@@ -138,10 +127,7 @@ async function main() {
       abandonedScore: ${normalizedAbandonedScore}
 
       ==maintenanceScore==
-      ${normalizedIssueCloseSpeedScore
-        .plus(normalizedIssueCommentByCollaboratorScore)
-        .minus(normalizedAbandonedScore)
-        .dividedBy(3)}
+      ${maintenanceScore}
       --------------------------------------------
     `)
   }
