@@ -1,16 +1,21 @@
+MEMO:
+直近100件数ではなく、直近1年のデータで計算。
+maintenanceScoreは3で割っていない。
+---
+
 Framework name: svelte
       ==unnormalized scores==
       issueCloseSpeedScore: 6.8240228177578764203
       issueCommentByCollaboratorScore: 5416.0281592224922038
-      abandonedScore: Infinity
+      abandonedScore: 4732.8603557187420998
 
       ==normalized scores==
       issueCloseSpeedScore: 0
       issueCommentByCollaboratorScore: 1
-      abandonedScore: NaN
+      abandonedScore: 0.83149278043711122001
 
       ==maintenanceScore==
-      NaN
+      0.16850721956288877999
       --------------------------------------------
     
 Framework name: react
@@ -22,10 +27,10 @@ Framework name: react
       ==normalized scores==
       issueCloseSpeedScore: 1
       issueCommentByCollaboratorScore: 0.44856046077663246132
-      abandonedScore: 0
+      abandonedScore: 1
 
       ==maintenanceScore==
-      1.4485604607766324613
+      0.4485604607766324613
       --------------------------------------------
     
 Framework name: vue
@@ -42,3 +47,5 @@ Framework name: vue
       ==maintenanceScore==
       0.2604748218572962574
       --------------------------------------------
+    
+✨  Done in 55.28s.

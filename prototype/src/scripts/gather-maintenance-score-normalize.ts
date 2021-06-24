@@ -65,7 +65,7 @@ async function main() {
           issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
           new Decimal(sumOfCommentLength).dividedBy(
-            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day')
+            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day') || 1
           )
         )
       }
