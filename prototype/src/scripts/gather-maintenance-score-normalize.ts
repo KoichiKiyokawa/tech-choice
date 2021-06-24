@@ -11,6 +11,7 @@ import { normalizeFromList } from '../utils/math'
 import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 import { saveResultToFile } from '../utils/file'
+import { MarkdownTable } from '../utils/table'
 
 const prisma = new PrismaClient()
 
@@ -94,19 +95,25 @@ async function main() {
 
   // show result of each framework
   const headers = [
-    '| Framework name | issueCloseSpeedScore | issueCommentByCollaboratorScore | abandonedScore | maintenanceScore |',
-    '|---|---|---|---|---|',
-  ]
-  const unnormalizedScoresTable: string[] = [...headers]
-  const normalizedScoresTable: string[] = [...headers]
+    'frameworkName',
+    'issueCloseSpeedScore',
+    'issueCommentByCollaboratorScore',
+    'abandonedScore',
+    'maintenanceScore',
+  ] as const
+
+  const unnormalizedScoresTable = new MarkdownTable('UnnormalizedScores', headers)
+  const normalizedScoresTable = new MarkdownTable('NormalizedScores', headers)
 
   for (const { name } of FRAMEWORK_WITH_OWNER_LIST) {
     const thisFrameworkScores = frameworkWithScoreMap.get(name)
     if (thisFrameworkScores === undefined) continue
 
-    unnormalizedScoresTable.push(
-      `| ${name} | ${thisFrameworkScores.issueCloseSpeedScore} | ${thisFrameworkScores.issueCommentByCollaboratorScore} | ${thisFrameworkScores.abandonedScore} | - |`
-    )
+    unnormalizedScoresTable.addRow({
+      frameworkName: name,
+      ...thisFrameworkScores,
+      maintenanceScore: '-',
+    })
 
     const normalizedIssueCloseSpeedScore = normalizeFromList({
       target: thisFrameworkScores.issueCloseSpeedScore,
@@ -127,19 +134,18 @@ async function main() {
       .plus(normalizedIssueCommentByCollaboratorScore)
       .minus(normalizedAbandonedScore)
 
-    normalizedScoresTable.push(
-      `| ${name} | ${normalizedIssueCloseSpeedScore} | ${normalizedIssueCommentByCollaboratorScore} | ${normalizedAbandonedScore} | ${maintenanceScore} |`
+    normalizedScoresTable.addRow({
+      frameworkName: name,
+      issueCloseSpeedScore: normalizedIssueCloseSpeedScore,
+      issueCommentByCollaboratorScore: normalizedIssueCommentByCollaboratorScore,
+      abandonedScore: normalizedAbandonedScore,
+      maintenanceScore,
+    })
+
+    saveResultToFile(
+      `${unnormalizedScoresTable}\n${normalizedScoresTable}`,
+      'gather-maintenance-score-normalize'
     )
-
-    const result = `# UnnormalizedScores
-
-${unnormalizedScoresTable.join('\n')}
-
-# NormalizedScores
-
-${normalizedScoresTable.join('\n')}`
-
-    saveResultToFile(result, 'gather-maintenance-score-normalize')
   }
 }
 
