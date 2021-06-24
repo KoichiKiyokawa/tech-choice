@@ -10,7 +10,7 @@ type Issue = NonNullable<
   NonNullable<NonNullable<GetIssueAndCommentsQuery['repository']>['issues']['edges']>[number]
 >['node']
 
-export async function getIssueAndComments({
+export async function fetchIssueAndComments({
   name,
   owner,
 }: {
@@ -46,7 +46,7 @@ export async function getIssueAndComments({
   return dataList
 }
 
-// getIssueAndComments({ name: 'svelte', owner: 'sveltejs' })
+// fetchIssueAndComments({ name: 'svelte', owner: 'sveltejs' })
 //   .then((res) => {
 //     console.log(res.length)
 //     fs.writeFileSync('res.json', JSON.stringify(res))
