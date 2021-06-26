@@ -12,7 +12,7 @@ import { urql } from '../modules/urql'
  * @returns コラボレータの名前が入った配列
  */
 export async function fetchCollaborators({ owner }: { owner: string }): Promise<string[]> {
-  let collaboratorList: string[] = []
+  const collaboratorList: string[] = []
   const cursor: { value?: string } = {}
 
   while (true) {
