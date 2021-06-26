@@ -2,10 +2,10 @@ export class MarkdownTable<T extends string> {
   constructor(
     public tableName: string,
     public headers: readonly T[],
-    public rows: Record<T, any>[] = []
+    public rows: Record<T, unknown>[] = []
   ) {}
 
-  addRow(row: Record<T, any>) {
+  addRow(row: Record<T, unknown>) {
     this.rows.push(row)
   }
 
