@@ -14,6 +14,12 @@ type Scores = {
 }
 
 /**
+ * 1/(経過日数) だと1日前と2日前の差が大きくなりすぎる。
+ * そこで、1/(経過日数+AGING_COEF)とすることで、差を縮める
+ */
+const AGING_COEF = 0
+
+/**
  * メンテナンスがされているかの指標(maintenance)を計算。正規化バージョン
  * 与えられたフレームワークの、直近100件のissueを収集する。
  * @see /images/maintenance.png
@@ -45,8 +51,8 @@ async function main() {
 
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
           new Decimal(1)
-            .dividedBy(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1)
-            .dividedBy(dayjs().diff(issue.closedAt, 'day') || 1)
+            .dividedBy(dayjs(issue.closedAt).diff(issue.createdAt, 'day') + AGING_COEF || 1)
+            .dividedBy(dayjs().diff(issue.closedAt, 'day') + AGING_COEF || 1)
         )
       } else {
         // issue がどれくらい放置されているか
@@ -56,7 +62,7 @@ async function main() {
           issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
           new Decimal(sumOfCommentLength).dividedBy(
-            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day') || 1
+            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day') + AGING_COEF || 1
           )
         )
       }
@@ -68,7 +74,7 @@ async function main() {
         if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
             new Decimal(comment.body.length).dividedBy(
-              dayjs().diff(comment.createdAt, 'day') || 1 // (コメントの文字数) / (コメントされてからの経過日数)
+              dayjs().diff(comment.createdAt, 'day') + AGING_COEF || 1 // (コメントの文字数) / (コメントされてからの経過日数 + 30)
             )
           )
         }
