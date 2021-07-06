@@ -19,6 +19,12 @@ describe('配列から求める正規化', () => {
     const result = normalizeFromList({ target: new Decimal(2), list: decimalNumbers })
     expect(result.equals(new Decimal(0.2))).toBe(true)
   })
+
+  it('空の配列にたいして正規化を行うと、エラーが返る', () => {
+    expect(() => {
+      normalizeFromList({ target: new Decimal(0), list: [] })
+    }).toThrow('Invalid argument: undefined')
+  })
 })
 
 describe('数字配列の総和', () => {
