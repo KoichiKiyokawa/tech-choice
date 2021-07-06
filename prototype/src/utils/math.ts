@@ -16,3 +16,10 @@ export const normalize = ({ target, min, max }: { target: Decimal; min: Decimal;
  */
 export const normalizeFromList = ({ target, list }: { target: Decimal; list: Decimal[] }) =>
   normalize({ target, min: Decimal.min(...list), max: Decimal.max(...list) })
+
+/**
+ * @param nums Decimal型の数値一覧
+ * @returns
+ */
+export const sum = (nums: readonly Decimal[]) =>
+  nums.reduce((acc, num) => acc.plus(num), new Decimal(0))
