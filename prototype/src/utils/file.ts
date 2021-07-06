@@ -8,6 +8,10 @@ import fs from 'fs'
  * @param extension 拡張子
  */
 export const saveResultToFile = (result: string, processName: string, extension: string = 'md') => {
+  if (!fs.existsSync(`results/${processName}`)) {
+    fs.mkdirSync(`results/${processName}`)
+  }
+
   const path = `results/${processName}/${dayjs().format('YYYY-MM-DDTHH-mm')}.${extension}`
   fs.writeFileSync(path, result)
 }
