@@ -37,7 +37,7 @@ async function main() {
           if (commit == null) return []
 
           return new Decimal(commit.additions + commit.deletions).dividedBy(
-            Math.abs(dayjs(commit.pushedDate).diff(new Date(), 'day')) || 1
+            Math.abs(dayjs(commit.pushedDate).diff(new Date(), 'day')) || 1,
           ) // avoid to devide 0 (instead, deviding 1)
         })
         .reduce((sum, c) => sum.plus(c), new Decimal(0))

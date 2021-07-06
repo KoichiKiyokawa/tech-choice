@@ -52,7 +52,7 @@ async function main() {
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
           new Decimal(1)
             .dividedBy(dayjs(issue.closedAt).diff(issue.createdAt, 'day') + AGING_COEF || 1)
-            .dividedBy(dayjs().diff(issue.closedAt, 'day') + AGING_COEF || 1)
+            .dividedBy(dayjs().diff(issue.closedAt, 'day') + AGING_COEF || 1),
         )
       } else {
         // issue がどれくらい放置されているか
@@ -62,8 +62,8 @@ async function main() {
           issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
           new Decimal(sumOfCommentLength).dividedBy(
-            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day') + AGING_COEF || 1
-          )
+            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day') + AGING_COEF || 1,
+          ),
         )
       }
 
@@ -74,8 +74,8 @@ async function main() {
         if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
             new Decimal(comment.body.length).dividedBy(
-              dayjs().diff(comment.createdAt, 'day') + AGING_COEF || 1 // (コメントの文字数) / (コメントされてからの経過日数 + 30)
-            )
+              dayjs().diff(comment.createdAt, 'day') + AGING_COEF || 1, // (コメントの文字数) / (コメントされてからの経過日数 + 30)
+            ),
           )
         }
       })
@@ -117,7 +117,7 @@ async function main() {
     const normalizedIssueCommentByCollaboratorScore = normalizeFromList({
       target: thisFrameworkScores.issueCommentByCollaboratorScore,
       list: Array.from(frameworkWithScoreMap.values()).map(
-        (v) => v.issueCommentByCollaboratorScore
+        (v) => v.issueCommentByCollaboratorScore,
       ),
     })
     const normalizedAbandonedScore = normalizeFromList({
@@ -139,7 +139,7 @@ async function main() {
 
     saveResultToFile(
       `${unnormalizedScoresTable}\n\n${normalizedScoresTable}`,
-      'gather-maintenance-score-normalize'
+      'gather-maintenance-score-normalize',
     )
   }
 }

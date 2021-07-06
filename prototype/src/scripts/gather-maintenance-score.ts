@@ -46,7 +46,7 @@ async function main() {
     // コラボレータが100人を超えることを想定して、ページングを行う必要がある。
     const collaboratorUserNameList =
       collaboratorResult.data?.organization?.membersWithRole.edges?.flatMap(
-        (edge) => edge?.node?.login ?? []
+        (edge) => edge?.node?.login ?? [],
       ) ?? [] // ユーザーネームは@以降の文字列。
 
     issueResult.data?.repository?.issues.edges?.forEach((edge) => {
@@ -59,7 +59,7 @@ async function main() {
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
           new Decimal(1)
             .dividedBy(new Decimal(dayjs(issue.closedAt).diff(issue.createdAt, 'day') || 1))
-            .dividedBy(new Decimal(dayjs().diff(issue.closedAt, 'day') || 1))
+            .dividedBy(new Decimal(dayjs().diff(issue.closedAt, 'day') || 1)),
         )
       } else {
         // issue がどれくらい放置されているか
@@ -69,8 +69,8 @@ async function main() {
           issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
           new Decimal(sumOfCommentLength).dividedBy(
-            new Decimal(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day'))
-          )
+            new Decimal(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day')),
+          ),
         )
       }
 
@@ -81,8 +81,8 @@ async function main() {
         if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
             new Decimal(comment.body.length).dividedBy(
-              new Decimal(dayjs().diff(comment.createdAt, 'day') || 1) // (コメントの文字数) / (コメントされてからの経過日数)
-            )
+              new Decimal(dayjs().diff(comment.createdAt, 'day') || 1), // (コメントの文字数) / (コメントされてからの経過日数)
+            ),
           )
         }
       })
@@ -93,7 +93,7 @@ async function main() {
       .minus(abandonedScore)
 
     console.log(
-      `${name}: issueCloseSpeedScore ${issueCloseSpeedScore} issueCommentByCollaboratorScore: ${issueCommentByCollaboratorScore} abandonedScore: ${abandonedScore} maintenanceScore: ${maintenanceScore}`
+      `${name}: issueCloseSpeedScore ${issueCloseSpeedScore} issueCommentByCollaboratorScore: ${issueCommentByCollaboratorScore} abandonedScore: ${abandonedScore} maintenanceScore: ${maintenanceScore}`,
     )
     // 2021/06/15
     // svelte: issueCloseSpeedScore 7.3179761155025682246 issueCommentByCollaboratorScore: 2906.4107723263815099 abandonedScore: 109.1365376274718156 maintenanceScore: 2804.5922108144122625
