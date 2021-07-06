@@ -6,18 +6,13 @@ import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 import { saveResultToFile } from '../utils/file'
 import { MarkdownTable } from '../utils/table'
 import { fetchCollaborators } from '../fetcher/fetch-collaborators'
+import { AGING_COEF } from '../constants/coef'
 
 type Scores = {
   issueCloseSpeedScore: Decimal
   issueCommentByCollaboratorScore: Decimal
   abandonedScore: Decimal
 }
-
-/**
- * 1/(経過日数) だと1日前と2日前の差が大きくなりすぎる。
- * そこで、1/(経過日数+AGING_COEF)とすることで、差を縮める
- */
-const AGING_COEF = 0
 
 /**
  * メンテナンスがされているかの指標(maintenance)を計算。正規化バージョン
