@@ -26,4 +26,9 @@ describe('数字配列の総和', () => {
     const nums = [1, 2, 3].map((n) => new Decimal(n))
     expect(sum(nums).equals(new Decimal(6))).toBe(true)
   })
+
+  it('0.1, 0.2, 0.3', () => {
+    const nums = [0.1, 0.2, 0.3].map((n) => new Decimal(n))
+    expect(sum(nums).equals(new Decimal(0.6))).toBe(true)
+  })
 })
