@@ -16,7 +16,7 @@ type DownloadHistory = [
  * ダウンロード数に関するスコア
  * TODO: fetch以外のロジックを切り出す
  * @param name フレームワーク・ライブラリの名前
- * @returns それぞれの
+ * @returns 当日、週間、月間、四半期、半年、一年間のダウンロード数をこの順番で配列に格納して返却する。
  */
 export async function fetchDownloads(name: string): Promise<DownloadHistory> {
   const data = await fetch(NPM_ENDPOINT + name).then((res) => res.json())
