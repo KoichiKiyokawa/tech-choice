@@ -46,29 +46,28 @@ async function calcDownloadScore(name: string): Promise<Decimal> {
 }
 
 /**
- * AgingScore: 30 / (経過日数 + 30)のようなもの。経過日数が立つほど小さくなり、価値が低くなる。
+ * AgingScore: 30 / (経過日数 + 30)のようなもの。経過日数が増えるほど小さくなり、価値が低くなる。
  * 例えば、12ヶ月から6ヶ月の期間中のAgingScoreはその期間中の平均とする。一ヶ月は30日として計算する。
  * @example calcAverageAging(12 * 30, 6 * 30)
  * @private
  */
-export function calcAverageAging(fromDayjsAgo: number, toDayjsAgo: number): Decimal {
-  const [from, to] =
-    fromDayjsAgo < toDayjsAgo ? [fromDayjsAgo, toDayjsAgo] : [toDayjsAgo, fromDayjsAgo]
+export function calcAverageAging(fromDaysAgo: number, toDajsAgo: number): Decimal {
+  const [from, to] = fromDaysAgo < toDajsAgo ? [fromDaysAgo, toDajsAgo] : [toDajsAgo, fromDaysAgo]
 
   let result = new Decimal(0)
   for (let day = from; day <= to; day++) {
     const agingScore = new Decimal(AGING_COEF).dividedBy(new Decimal(AGING_COEF).plus(day))
     result = result.plus(agingScore)
   }
-  return result.dividedBy(to - from)
+  return result.dividedBy(to - from + 1)
 }
 
 /**
- * calcAverageAging(12 * 30, 6 * 30) -> 0.10378392563748099364
- * calcAverageAging(6 * 30, 3 * 30) -> 0.18872243477981013918
- * calcAverageAging(3 * 30, 1 * 30) -> 0.35283227053416188112
- * calcAverageAging(1 * 30, 7) -> 0.65910158629186788174
- * calcAverageAging(7, 0) -> 1.0282818267197502763
+ * calcAverageAging(12 * 30, 6 * 30) -> 0.10321053378313026992
+ * calcAverageAging(6 * 30, 3 * 30) -> 0.18664856187014189589
+ * calcAverageAging(3 * 30, 1 * 30) -> 0.34704813495163463716
+ * calcAverageAging(1 * 30, 7) -> 0.63163902019637338667
+ * calcAverageAging(7, 0) -> 0.89974659837978149173
  */
 
 main()
