@@ -6,7 +6,7 @@ import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 import { saveResultToFile } from '../utils/file'
 import { MarkdownTable } from '../utils/table'
 import { fetchCollaborators } from '../fetcher/fetch-collaborators'
-import { AGING_COEF } from '../constants/coef'
+import { calcAgingScore } from '../utils/date'
 
 type Scores = {
   issueCloseSpeedScore: Decimal
@@ -46,8 +46,8 @@ async function main() {
 
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
           new Decimal(1)
-            .dividedBy(dayjs(issue.closedAt).diff(issue.createdAt, 'day') + AGING_COEF || 1)
-            .dividedBy(dayjs().diff(issue.closedAt, 'day') + AGING_COEF || 1),
+            .times(calcAgingScore(dayjs(issue.closedAt).diff(issue.createdAt, 'day')))
+            .times(calcAgingScore(dayjs().diff(issue.closedAt, 'day'))),
         )
       } else {
         // issue がどれくらい放置されているか
@@ -56,8 +56,8 @@ async function main() {
         const sumOfCommentLength =
           issue.comments.nodes?.reduce((sum, comment) => sum + (comment?.body.length ?? 0), 0) ?? 0
         abandonedScore = abandonedScore.plus(
-          new Decimal(sumOfCommentLength).dividedBy(
-            dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day') + AGING_COEF || 1,
+          new Decimal(sumOfCommentLength).times(
+            calcAgingScore(dayjs(issue.createdAt).diff(dayjs().subtract(1, 'year'), 'day')),
           ),
         )
       }
@@ -68,8 +68,8 @@ async function main() {
         // コラボレータによるコメント
         if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
-            new Decimal(comment.body.length).dividedBy(
-              dayjs().diff(comment.createdAt, 'day') + AGING_COEF || 1, // (コメントの文字数) / (コメントされてからの経過日数 + 30)
+            new Decimal(comment.body.length).times(
+              calcAgingScore(dayjs().diff(comment.createdAt, 'day')),
             ),
           )
         }

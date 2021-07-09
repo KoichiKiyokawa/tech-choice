@@ -8,6 +8,7 @@ import { urql } from '../modules/urql'
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
+import { calcAgingScore } from '../utils/date'
 
 const prisma = new PrismaClient()
 
@@ -32,7 +33,7 @@ async function main() {
         const eachCommentBodyLength = comment?.body.length ?? 0 // それぞれのコメントの文字数 TODO: issueテンプレートは省いたほうが良い？
         const eachCommentElapsedDate = dayjs().diff(comment?.createdAt, 'day') // それぞれのコメントの経過日数
         infoShareActivityScore = infoShareActivityScore.plus(
-          new Decimal(eachCommentBodyLength).dividedBy(new Decimal(eachCommentElapsedDate || 1)), // 0で割るのを防ぐ
+          new Decimal(eachCommentBodyLength).times(calcAgingScore(eachCommentElapsedDate)),
         )
       })
     })
