@@ -1,10 +1,10 @@
 import Decimal from 'decimal.js'
 import { normalizeFromList, sum } from '../utils/math'
-import { AGING_COEF } from '../constants/coef'
 import { fetchDownloads } from '../fetcher/fetch-downloads'
 import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { MarkdownTable } from '../utils/table'
 import { saveResultToFile } from '../utils/file'
+import { calcAgingScore } from '../utils/date'
 
 /**
  * ダウンロード数やスター数などから popularity を測る
@@ -56,8 +56,7 @@ export function calcAverageAging(fromDaysAgo: number, toDajsAgo: number): Decima
 
   let result = new Decimal(0)
   for (let day = from; day <= to; day++) {
-    const agingScore = new Decimal(AGING_COEF).dividedBy(new Decimal(AGING_COEF).plus(day))
-    result = result.plus(agingScore)
+    result = result.plus(calcAgingScore(day))
   }
   return result.dividedBy(to - from + 1)
 }
