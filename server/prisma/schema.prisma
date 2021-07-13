@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// React, Vue などのフレームワークに関するデータを格納する
+model Framework {
+  id      Int     @id @default(autoincrement())
+  name    String // フレームワーク名
+  owner   String // リポジトリのオーナー名 e.g. sveltjs, vuejs
+  codeURL String? // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
+
+  commits       Commit[]
+  issues        Issue[]
+  issueComments IssueComment[]
+  stars         Star[]
+  downloads     Download[]
+}
+
+// コミットを時系列データとして格納
+model Commit {
+  id          Int       @id @default(autoincrement())
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId Int
+  commitedAt  DateTime // コミットされた日時
+  plusCount   Int // そのコミットで追加された行数
+  minusCount  Int // そのコミットで削除された行数
+}
+
+// issueを時系列データとして格納
+model Issue {
+  id            Int            @id @default(autoincrement())
+  framework     Framework      @relation(fields: [frameworkId], references: [id])
+  frameworkId   Int
+  openedAt      DateTime // issueがopenされた日時
+  closedAt      DateTime // issueがcloseされた日時
+  issueComments IssueComment[]
+}
+
+// issue についたコメントを格納
+model IssueComment {
+  id          Int       @id @default(autoincrement())
+  issue       Issue     @relation(fields: [issueId], references: [id])
+  issueId     Int
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId Int
+  postedAt    DateTime // コメントが投稿された日時
+}
+
+// star履歴
+model Star {
+  id          Int       @id @default(autoincrement())
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId Int
+  starredAt   DateTime // スターがなされた日時
+}
+
+// npmのダウンロード履歴
+model Download {
+  id          Int       @id @default(autoincrement())
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId Int
+}
