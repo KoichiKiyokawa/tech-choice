@@ -7,7 +7,6 @@ import {
 import { urql } from '../modules/urql'
 
 /**
- * TODO: コラボレータが100人を超えることを想定して、ページングを行う必要がある。
  * @param owner リポジトリのオーナー名
  * @returns コラボレータの名前が入った配列
  */
