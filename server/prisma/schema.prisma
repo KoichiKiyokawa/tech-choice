@@ -20,8 +20,9 @@ model Framework {
   commits       Commit[]
   issues        Issue[]
   issueComments IssueComment[]
-  stars         Star[]
+  collaborators Collaborator[]
   downloads     Download[]
+  stars         Star[]
 }
 
 // コミットを時系列データとして格納
@@ -54,12 +55,12 @@ model IssueComment {
   postedAt    DateTime // コメントが投稿された日時
 }
 
-// star履歴
-model Star {
+// コラボレータ(フレームワークの開発チームに属するメンバー)
+model Collaborator {
   id          Int       @id @default(autoincrement())
+  name        String // コラボレータの名前
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
-  starredAt   DateTime // スターがなされた日時
 }
 
 // npmのダウンロード履歴
@@ -67,4 +68,12 @@ model Download {
   id          Int       @id @default(autoincrement())
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
+}
+
+// star履歴
+model Star {
+  id          Int       @id @default(autoincrement())
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId Int
+  starredAt   DateTime // スターがなされた日時
 }
