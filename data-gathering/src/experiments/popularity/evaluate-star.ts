@@ -1,21 +1,20 @@
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../../constants/framework-list'
-import { fetchStarredAtList } from '../../fetcher/fetch-starred-at-list'
-import { DateISOstring } from '../../types/date'
+import { fetchStarredAtList, StarHistory } from '../../fetcher/fetch-starred-at-list'
 import { calcAgingScore } from '../../utils/date'
 import { saveResultToFile } from '../../utils/file'
 import { normalizeFromList } from '../../utils/math'
 import { MarkdownTable } from '../../utils/table'
 
 async function main() {
-  const allFrameworkResults: DateISOstring[][] = await Promise.all(
+  const allFrameworkResults: StarHistory[][] = await Promise.all(
     FRAMEWORK_WITH_OWNER_LIST.map(fetchStarredAtList),
   )
 
-  const allFrameworkScores: Decimal[] = allFrameworkResults.map((result) =>
-    result.reduce(
-      (acc, starredAt) => acc.plus(calcAgingScore(dayjs().diff(starredAt, 'days'))),
+  const allFrameworkScores: Decimal[] = allFrameworkResults.map((starHistories) =>
+    starHistories.reduce(
+      (acc, history) => acc.plus(calcAgingScore(dayjs().diff(history.starredAt, 'days'))),
       new Decimal(0),
     ),
   )

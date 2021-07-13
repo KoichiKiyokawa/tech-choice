@@ -4,6 +4,11 @@ import { urql } from '../modules/urql'
 import { DateISOstring } from '../types/date'
 import { withinOneYear } from '../utils/date'
 
+export type StarHistory = {
+  id: string
+  starredAt: DateISOstring
+}
+
 /**
  * スターされた日付の履歴を新しい順に取得する
  * @param name フレームワーク名
@@ -16,8 +21,8 @@ export async function fetchStarredAtList({
 }: {
   name: string
   owner: string
-}): Promise<DateISOstring[]> {
-  const starredAtList: DateISOstring[] = []
+}): Promise<StarHistory[]> {
+  const starredAtList: StarHistory[] = []
   const cursor: { value?: string } = {}
 
   loop: while (true) {
@@ -31,10 +36,11 @@ export async function fetchStarredAtList({
     const edges = result.data?.repository?.stargazers.edges
     if (edges == null) return []
 
-    const starredAtListInThisLoop: DateISOstring[] = edges.map((edge) => edge?.starredAt) ?? []
-    for (const starredAt of starredAtListInThisLoop) {
+    const starredAtListInThisLoop: StarHistory[] =
+      edges.flatMap((edge) => (edge ? { starredAt: edge.starredAt, id: edge.cursor } : [])) ?? []
+    for (const history of starredAtListInThisLoop) {
       // 直近一年分のみを格納
-      if (withinOneYear(starredAt)) starredAtList.push(starredAt)
+      if (withinOneYear(history.starredAt)) starredAtList.push(history)
       else break loop // 一年以上前のデータが混じっていたら、処理終了(新しい順に取得しているため)
     }
 
