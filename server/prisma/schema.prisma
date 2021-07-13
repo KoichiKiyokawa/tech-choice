@@ -23,6 +23,8 @@ model Framework {
   collaborators Collaborator[]
   downloads     Download[]
   stars         Star[]
+
+  @@unique([owner, name])
 }
 
 // コミットを時系列データとして格納
@@ -72,7 +74,7 @@ model Download {
 
 // star履歴
 model Star {
-  id          Int       @id @default(autoincrement())
+  id          String    @id
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
   starredAt   DateTime // スターがなされた日時
