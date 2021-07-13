@@ -11,4 +11,4 @@ services:
     restart: always
 
 volumes:
-  db-data:
+  db_data:
