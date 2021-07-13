@@ -65,11 +65,13 @@ model Collaborator {
   frameworkId Int
 }
 
-// npmのダウンロード履歴
+// npmのダウンロード履歴。あるフレームワークの、ある日付におけるダウンロード数を記録する
 model Download {
-  id          Int       @id @default(autoincrement())
-  framework   Framework @relation(fields: [frameworkId], references: [id])
-  frameworkId Int
+  id           Int       @id @default(autoincrement())
+  framework    Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId  Int
+  downloadedAt DateTime // ある日付
+  count        Int // ダウンロード数
 }
 
 // star履歴
