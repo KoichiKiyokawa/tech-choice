@@ -20552,6 +20552,26 @@ export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type GetStargazerQueryVariables = Exact<{
+  name: Scalars['String']
+  owner: Scalars['String']
+  after?: Maybe<Scalars['String']>
+}>
+
+export type GetStargazerQuery = { __typename?: 'Query' } & {
+  repository?: Maybe<
+    { __typename?: 'Repository' } & {
+      stargazers: { __typename?: 'StargazerConnection' } & {
+        edges?: Maybe<
+          Array<
+            Maybe<{ __typename?: 'StargazerEdge' } & Pick<StargazerEdge, 'cursor' | 'starredAt'>>
+          >
+        >
+      }
+    }
+  >
+}
+
 export const GetCollaborators = gql`
   query getCollaborators($owner: String!, $after: String) {
     organization(login: $owner) {
@@ -20615,6 +20635,18 @@ export const GetIssueAndComments = gql`
               }
             }
           }
+        }
+      }
+    }
+  }
+`
+export const GetStargazer = gql`
+  query getStargazer($name: String!, $owner: String!, $after: String) {
+    repository(name: $name, owner: $owner) {
+      stargazers(first: 100, after: $after, orderBy: { field: STARRED_AT, direction: DESC }) {
+        edges {
+          cursor
+          starredAt
         }
       }
     }

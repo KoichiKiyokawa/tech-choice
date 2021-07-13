@@ -1,10 +1,10 @@
 import Decimal from 'decimal.js'
-import { normalizeFromList, sum } from '../utils/math'
-import { fetchDownloads } from '../fetcher/fetch-downloads'
-import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
-import { MarkdownTable } from '../utils/table'
-import { saveResultToFile } from '../utils/file'
-import { calcAgingScore } from '../utils/date'
+import { normalizeFromList, sum } from '../../utils/math'
+import { fetchDownloads } from '../../fetcher/fetch-downloads'
+import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../../constants/framework-list'
+import { MarkdownTable } from '../../utils/table'
+import { saveResultToFile } from '../../utils/file'
+import { calcAgingScore } from '../../utils/date'
 
 /**
  * ダウンロード数やスター数などから popularity を測る
@@ -28,7 +28,7 @@ async function main() {
       }).toFixed(2),
     })
   }
-  saveResultToFile(table.toString(), 'calc-popularity')
+  saveResultToFile(table.toString(), 'evaluate-download')
 }
 
 async function calcDownloadScore(name: string): Promise<Decimal> {

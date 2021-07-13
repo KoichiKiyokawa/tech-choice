@@ -1,0 +1,10 @@
+query getStargazer($name: String!, $owner: String!, $after: String) {
+  repository(name: $name, owner: $owner) {
+    stargazers(first: 100, after: $after, orderBy: { field: STARRED_AT, direction: DESC }) {
+      edges {
+        cursor
+        starredAt
+      }
+    }
+  }
+}
