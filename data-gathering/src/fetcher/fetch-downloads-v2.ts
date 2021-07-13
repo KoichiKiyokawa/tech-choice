@@ -35,15 +35,19 @@ export async function fetchDownloadsV2({ name }: { name: string }): Promise<Down
  * @param dayAgo 何日前のデータか。当日は0日前とする
  * @private
  */
-function fetchSpecificDayAgo({
+async function fetchSpecificDayAgo({
   name,
   dayAgo,
 }: {
   name: string
   dayAgo: number
 }): Promise<Download> {
-  const oneYearAgoYYYYMMDD = dayjs().subtract(dayAgo, 'days').format('YYYY-MM-DD')
-  return fetch(`${ENDPOINT}/${oneYearAgoYYYYMMDD}/${name}`).then((r) => r.json())
+  const dayAgoInstance = dayjs().subtract(dayAgo, 'days')
+  const result: { downloads: number } = await fetch(
+    `${ENDPOINT}/${dayAgoInstance.format('YYYY-MM-DD')}/${name}`,
+  ).then((r) => r.json())
+
+  return { count: result.downloads, downloadedAt: dayAgoInstance.startOf('date').toISOString() }
 }
 
 // fetchDownloadsV2({ name: 'svelte' }).then(console.log)
