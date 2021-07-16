@@ -43,7 +43,7 @@ model Issue {
   framework     Framework      @relation(fields: [frameworkId], references: [id])
   frameworkId   Int
   openedAt      DateTime // issueがopenされた日時
-  closedAt      DateTime // issueがcloseされた日時
+  closedAt      DateTime? // issueがcloseされた日時
   issueComments IssueComment[]
 }
 
@@ -55,6 +55,8 @@ model IssueComment {
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
   postedAt    DateTime // コメントが投稿された日時
+  body        String // コメントの本文
+  author      String // コメントの投稿者
 }
 
 // コラボレータ(フレームワークの開発チームに属するメンバー)
