@@ -26,7 +26,6 @@ async function main() {
       .query<GetCommitHistoryQuery, GetCommitHistoryQueryVariables>(GetCommitHistory, {
         name,
         owner,
-        since: '2020-01-01T00:00:00+0000',
       })
       .toPromise()
     const target = result.data?.repository?.defaultBranchRef?.target
@@ -37,7 +36,7 @@ async function main() {
           if (commit == null) return []
 
           return new Decimal(commit.additions + commit.deletions).dividedBy(
-            Math.abs(dayjs(commit.pushedDate).diff(new Date(), 'day')) || 1,
+            Math.abs(dayjs(commit.committedDate).diff(new Date(), 'day')) || 1,
           ) // avoid to devide 0 (instead, deviding 1)
         })
         .reduce((sum, c) => sum.plus(c), new Decimal(0))

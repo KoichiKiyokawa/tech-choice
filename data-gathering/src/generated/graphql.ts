@@ -20458,7 +20458,6 @@ export type GetCollaboratorsQuery = { __typename?: 'Query' } & {
 export type GetCommitHistoryQueryVariables = Exact<{
   name: Scalars['String']
   owner: Scalars['String']
-  since: Scalars['GitTimestamp']
   after?: Maybe<Scalars['String']>
 }>
 
@@ -20478,7 +20477,7 @@ export type GetCommitHistoryQuery = { __typename?: 'Query' } & {
                               node?: Maybe<
                                 { __typename?: 'Commit' } & Pick<
                                   Commit,
-                                  'id' | 'pushedDate' | 'additions' | 'deletions'
+                                  'id' | 'committedDate' | 'additions' | 'deletions'
                                 >
                               >
                             }
@@ -20588,18 +20587,18 @@ export const GetCollaborators = gql`
   }
 `
 export const GetCommitHistory = gql`
-  query getCommitHistory($name: String!, $owner: String!, $since: GitTimestamp!, $after: String) {
+  query getCommitHistory($name: String!, $owner: String!, $after: String) {
     repository(name: $name, owner: $owner) {
       defaultBranchRef {
         id
         target {
           ... on Commit {
-            history(since: $since, after: $after) {
+            history(after: $after) {
               edges {
                 cursor
                 node {
                   id
-                  pushedDate
+                  committedDate
                   additions
                   deletions
                 }
