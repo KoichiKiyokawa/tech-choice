@@ -21,6 +21,7 @@ jobs:
           node-version: 14.16.1
           cache: yarn
       - run: yarn install --frozen-lockfile
+      - run: yarn prisma generate
       - run: yarn tsc --noEmit
       - run: yarn test
       - run: yarn lint:check
