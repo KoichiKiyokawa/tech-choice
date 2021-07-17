@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
+import { PrismaService } from '../prisma.service'
 import { FrameworkController } from './framework.controller'
 import { FrameworkService } from './framework.service'
 
@@ -8,7 +9,7 @@ describe('FrameworkController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FrameworkController],
-      providers: [FrameworkService],
+      providers: [FrameworkService, PrismaService],
     }).compile()
 
     controller = module.get<FrameworkController>(FrameworkController)
