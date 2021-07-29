@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client'
+import dayjs from 'dayjs'
+import { Decimal } from 'decimal.js'
+import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import {
   GetIssueAndComments,
   GetIssueAndCommentsQuery,
   GetIssueAndCommentsQueryVariables,
 } from '../generated/graphql'
 import { urql } from '../modules/urql'
-import dayjs from 'dayjs'
-import { Decimal } from 'decimal.js'
-import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { calcAgingScore } from '../utils/date'
 
 const prisma = new PrismaClient()
@@ -16,6 +16,7 @@ const prisma = new PrismaClient()
  * 情報共有の活発さ(infoShareActivity)を計算
  * 与えられたフレームワークの、直近100件のissueを収集する。
  * それぞれのissueの、コメントについて、「コメントの文字数 ÷ 経過日数」を計算し、足し上げる。
+ * TODO: コラボレータ以外のコメントに絞る必要がある。
  */
 async function main() {
   for (const { name, owner } of FRAMEWORK_WITH_OWNER_LIST) {
