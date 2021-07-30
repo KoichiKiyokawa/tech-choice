@@ -23,7 +23,7 @@ model Framework {
   collaborators Collaborator[]
   downloads     Download[]
   stars         Star[]
-
+  score         Score?
   @@unique([owner, name])
 }
 
@@ -82,4 +82,12 @@ model Star {
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
   starredAt   DateTime // スターがなされた日時
+}
+
+// 各指標のスコアを保持しておくためのテーブル
+model Score {
+  id          Int       @id @default(autoincrement())
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId Int
+  maintenance Int
 }
