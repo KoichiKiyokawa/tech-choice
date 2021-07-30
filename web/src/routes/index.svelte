@@ -69,15 +69,15 @@
     evaluations = evaluations.map((ev) => ({ ...ev, weight: weightInputs[ev.key] }))
   }
 
-  let settings = {
-    digits: 3, // 表示する少数の桁数
-  }
-
   function _validateWeights(weights: number[]): boolean {
     // 重みの絶対値が1を超えるものをはじく
     if (weights.some((w) => Math.abs(w) > 1)) return false
     // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
     return true
+  }
+
+  let settings = {
+    digits: 3, // 表示する少数の桁数
   }
 </script>
 
