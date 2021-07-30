@@ -98,6 +98,9 @@
     {/each}
   </div>
 
+  <h2>プリセット</h2>
+  <p>TODO</p>
+
   <h2>設定</h2>
   <label>
     表示桁数
@@ -110,6 +113,9 @@
     max-width: 1200px;
     margin: auto;
     padding-top: 2rem;
+  }
+  h2 {
+    margin-top: 1rem;
   }
 
   input:invalid {
