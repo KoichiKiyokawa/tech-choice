@@ -2,10 +2,11 @@
   import type { FrameworkWithScore } from '@server/framework/framework.type'
   import type { Score } from '@server/type'
   import { DataTable } from 'carbon-components-svelte'
+  import 'carbon-components-svelte/css/g10.css'
   import { baseFetch } from '~/utils/fetch'
 
   let evaluations: {
-    key: keyof Score
+    key: keyof Pick<Score, 'developmentActivity' | 'maintenance' | 'popularity'>
     value: string
     weight: number
   }[] = [
@@ -13,16 +14,21 @@
     { key: 'maintenance', value: 'メンテナンス', weight: 0 },
     { key: 'popularity', value: '人気度', weight: 0 },
   ]
-  const evaluationKeys: string[] = evaluations.map((e) => e.key) // cell.key が string 型なのでダウンキャストしておく
   const headers = [
     { key: 'name', value: 'フレームワーク' },
     ...evaluations,
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
 
+  // 重みの入力欄の数値を格納しておく
+  let weightInputs: Record<typeof evaluations[number]['key'], number> = {
+    developmentActivity: 0,
+    maintenance: 0,
+    popularity: 0,
+  }
+
   let frameworkWithScores: FrameworkWithScore[] = []
 
-  let digits = 3 // 表示する少数の桁数
   ;(async () => {
     const { data, error } = await baseFetch<void, FrameworkWithScore[]>('frameworks/scores')
     if (error != null) return alert('failed to fetch data')
@@ -39,65 +45,81 @@
     ),
   }))
 
-  const shouldPutInputHereSymbol = Symbol('shouldPutInputHere')
+  function validateWeights(weights: number[]): boolean {
+    // 重みの絶対値が1を超えるものをはじく
+    if (weights.some((w) => Math.abs(w) > 1)) return false
+    // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
+    return true
+  }
 
-  function handleInputWeight(e: { currentTarget: HTMLInputElement }) {
-    const targetEvaluationKey = e.currentTarget.name as keyof Score
-    const newEvaluations = evaluations.map((ev) =>
-      ev.key === targetEvaluationKey ? { ...ev, weight: Number(e.currentTarget.value) } : ev,
-    )
-    const ok = validateWeights(newEvaluations)
-    if (!ok) {
+  /**
+   * 重みのバリデーションを行い、有効であれば反映する。
+   */
+  function handleWeightInputChange(e: { currentTarget: HTMLInputElement }) {
+    if (!validateWeights(Object.values(weightInputs))) {
       e.currentTarget.setCustomValidity('invalid weight')
       e.currentTarget.reportValidity()
       return
     }
 
     e.currentTarget.setCustomValidity('')
-    evaluations = newEvaluations
+    evaluations = evaluations.map((ev) => ({ ...ev, weight: weightInputs[ev.key] }))
   }
 
-  function validateWeights(newEvaluations: { weight: number }[]): boolean {
-    // 重みの絶対値が1を超えるものをはじく
-    if (newEvaluations.some((ev) => Math.abs(ev.weight) > 1)) return false
-    // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
-    return true
+  let settings = {
+    digits: 3, // 表示する少数の桁数
   }
 </script>
 
-<DataTable
-  sortable
-  {headers}
-  rows={[
-    ...rows,
-    {
-      id: 'footer',
-      key: 'footer',
-      name: '',
-      weightedScore: '',
-      ...Object.fromEntries(evaluationKeys.map((key) => [key, shouldPutInputHereSymbol])),
-    },
-  ]}
-  class="hoge"
->
-  <span slot="cell" let:row let:cell>
-    {#if row.id === 'footer' && cell.value === shouldPutInputHereSymbol}
-      <input
-        value={evaluations.find((ev) => ev.key === cell.key)?.weight ?? 0}
-        on:change={handleInputWeight}
-        name={cell.key}
-      />
-    {:else if evaluationKeys.includes(cell.key)}
-      <!-- 少数を丸めて表示する -->
-      {Math.round(cell.value * 10 ** digits) / 10 ** digits}
-    {:else}
-      {cell.value}
-    {/if}
-  </span>
-</DataTable>
+<div class="container">
+  <DataTable stickyHeader sortable {headers} {rows} />
+
+  <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
+    <span class="weight-label">重み</span>
+    {#each evaluations as evaluation}
+      <div class="each-weight-input-wrapper">
+        <input
+          type="number"
+          step="0.01"
+          bind:value={weightInputs[evaluation.key]}
+          on:change={handleWeightInputChange}
+        />
+      </div>
+    {/each}
+  </div>
+
+  <h2>設定</h2>
+  <label>
+    表示桁数
+    <input bind:value={settings.digits} />
+  </label>
+</div>
 
 <style>
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding-top: 2rem;
+  }
+
   input:invalid {
     border: solid red 2px;
+  }
+
+  .weight-inputs-wrapper {
+    --each-width: calc(100% / var(--col-length));
+  }
+  .each-weight-input-wrapper {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    width: var(--each-width);
+  }
+  .each-weight-input-wrapper input {
+    width: 100%;
+  }
+  .weight-label {
+    display: inline-block;
+    width: var(--each-width);
+    text-align: center;
   }
 </style>
