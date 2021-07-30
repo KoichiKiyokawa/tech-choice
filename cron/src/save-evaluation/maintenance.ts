@@ -34,10 +34,12 @@ async function main() {
     )
   } // end of each framework loop
 
-  // normalize for each framework
+  // 最後に正規化するために保持しておく
+  const nameWithMaintenanceScore = new Map<Frameworks, Decimal>()
+
+  // 各サブスコアを正規化してから足し引きして、メンテナンススコア(正規化前)を計算
   for (const frameworkWithOwner of FRAMEWORK_WITH_OWNER_LIST) {
-    const thisFrameworkScores = frameworkWithScoreMap.get(frameworkWithOwner.name)
-    if (thisFrameworkScores == null) continue
+    const thisFrameworkScores = frameworkWithScoreMap.get(frameworkWithOwner.name)!
 
     const normalizedIssueCloseSpeedScore =
       normalizeFromList({
@@ -61,7 +63,16 @@ async function main() {
       .plus(normalizedIssueCommentByCollaboratorScore)
       .minus(normalizedAbandonedScore)
 
-    const operation = { maintenance: maintenanceScore.toNumber() }
+    nameWithMaintenanceScore.set(frameworkWithOwner.name, maintenanceScore)
+  }
+
+  for (const frameworkWithOwner of FRAMEWORK_WITH_OWNER_LIST) {
+    const thisFrameworkScore = nameWithMaintenanceScore.get(frameworkWithOwner.name)!
+    const normalizedMaintenanceScore = normalizeFromList({
+      target: thisFrameworkScore,
+      list: Array.from(nameWithMaintenanceScore.values()),
+    })
+    const operation = { maintenance: normalizedMaintenanceScore.toNumber() }
     await prisma.framework.update({
       where: { owner_name: frameworkWithOwner },
       data: { score: { upsert: { create: operation, update: operation } } },
