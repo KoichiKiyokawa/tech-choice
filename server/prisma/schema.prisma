@@ -89,5 +89,6 @@ model Score {
   id          Int       @id @default(autoincrement())
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
-  maintenance Float
+  maintenance Float     @default(0)
+  popularity  Float     @default(0)
 }
