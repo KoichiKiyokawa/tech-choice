@@ -38,25 +38,28 @@
 
   $: rows = frameworkWithScores.map((fws) => ({
     ...fws,
-    ...fws.score,
+    ...Object.fromEntries(
+      Object.entries(fws.score ?? {}).map(([key, val]) => [
+        key,
+        _roundByTheDigits(val, settings.digits),
+      ]),
+    ),
     weightedScore: evaluations.reduce(
       (sum, evaluation) => sum + (fws.score?.[evaluation.key] ?? 0) * evaluation.weight,
       0,
     ),
   }))
 
-  function validateWeights(weights: number[]): boolean {
-    // 重みの絶対値が1を超えるものをはじく
-    if (weights.some((w) => Math.abs(w) > 1)) return false
-    // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
-    return true
+  function _roundByTheDigits(num: number, digits: number) {
+    if (digits <= 0) digits = 2
+    return Math.round(num * 10 ** digits) / 10 ** digits
   }
 
   /**
    * 重みのバリデーションを行い、有効であれば反映する。
    */
   function handleWeightInputChange(e: { currentTarget: HTMLInputElement }) {
-    if (!validateWeights(Object.values(weightInputs))) {
+    if (!_validateWeights(Object.values(weightInputs))) {
       e.currentTarget.setCustomValidity('invalid weight')
       e.currentTarget.reportValidity()
       return
@@ -68,6 +71,13 @@
 
   let settings = {
     digits: 3, // 表示する少数の桁数
+  }
+
+  function _validateWeights(weights: number[]): boolean {
+    // 重みの絶対値が1を超えるものをはじく
+    if (weights.some((w) => Math.abs(w) > 1)) return false
+    // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
+    return true
   }
 </script>
 
@@ -91,7 +101,7 @@
   <h2>設定</h2>
   <label>
     表示桁数
-    <input bind:value={settings.digits} />
+    <input type="number" bind:value={settings.digits} />
   </label>
 </div>
 
