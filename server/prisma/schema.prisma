@@ -86,9 +86,10 @@ model Star {
 
 // 各指標のスコアを保持しておくためのテーブル
 model Score {
-  id          Int       @id @default(autoincrement())
-  framework   Framework @relation(fields: [frameworkId], references: [id])
-  frameworkId Int
-  maintenance Float     @default(0)
-  popularity  Float     @default(0)
+  id                  Int       @id @default(autoincrement())
+  framework           Framework @relation(fields: [frameworkId], references: [id])
+  frameworkId         Int
+  maintenance         Float     @default(0) // メンテナンスがされているか
+  popularity          Float     @default(0) // 人気
+  developmentActivity Float     @default(0) // 開発の活発さ
 }
