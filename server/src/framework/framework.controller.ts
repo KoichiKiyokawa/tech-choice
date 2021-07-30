@@ -10,8 +10,8 @@ export class FrameworkController {
     return this.frameworkService.getAllFrameworks()
   }
 
-  @Get('/all_info')
-  getAllFrameworkInfo(): Promise<string> {
-    return this.frameworkService.getAllFrameworkInfo()
+  @Get('/scores')
+  getAllFrameworkScores() {
+    return this.frameworkService.getAllFrameworkScores()
   }
 }

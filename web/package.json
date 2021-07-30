@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "svelte-kit dev",
+    "dev": "svelte-kit dev --port 5000 --open",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings --fail-on-hints",
@@ -13,7 +13,8 @@
     "format": "prettier --write --plugin-search-dir=. ."
   },
   "devDependencies": {
-    "@sveltejs/kit": "1.0.0-next.125",
+    "@sveltejs/adapter-static": "^1.0.0-next.13",
+    "@sveltejs/kit": "1.0.0-next.139",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
     "carbon-components-svelte": "^0.42.2",

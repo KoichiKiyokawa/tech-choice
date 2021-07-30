@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma.service'
+import { FrameworkWithScore } from './framework.type'
 
 @Injectable()
 export class FrameworkService {
@@ -9,8 +10,7 @@ export class FrameworkService {
     return this.prisma.framework.findMany()
   }
 
-  async getAllFrameworkInfo() {
-    // TODO:
-    return ''
+  async getAllFrameworkScores(): Promise<FrameworkWithScore[]> {
+    return this.prisma.framework.findMany({ include: { score: true } })
   }
 }
