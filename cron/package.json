@@ -1,0 +1,21 @@
+{
+  "name": "cron",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "prisma": "^2.28.0",
+    "ts-node": "^10.1.0"
+  },
+  "prisma": {
+    "schema": "../server/prisma/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^2.28.0"
+  },
+  "volta": {
+    "node": "14.17.4",
+    "yarn": "1.22.11"
+  }
+}

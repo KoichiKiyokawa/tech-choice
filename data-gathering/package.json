@@ -35,8 +35,8 @@
     "typescript": "^4.3.5"
   },
   "volta": {
-    "node": "14.16.1",
-    "yarn": "1.22.10"
+    "node": "14.17.4",
+    "yarn": "1.22.11"
   },
   "jest": {
     "preset": "ts-jest"
