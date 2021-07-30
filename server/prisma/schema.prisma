@@ -72,7 +72,7 @@ model Download {
   id           Int       @id @default(autoincrement())
   framework    Framework @relation(fields: [frameworkId], references: [id])
   frameworkId  Int
-  downloadedAt DateTime // ある日付
+  downloadedAt DateTime  @db.Date // ある日付
   count        Int // ダウンロード数
 }
 
@@ -81,7 +81,7 @@ model Star {
   id          String    @id
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
-  starredAt   DateTime // スターがなされた日時
+  starredAt   DateTime  @db.Date // スターがなされた日時
 }
 
 // 各指標のスコアを保持しておくためのテーブル
