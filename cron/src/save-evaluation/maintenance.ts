@@ -39,20 +39,23 @@ async function main() {
     const thisFrameworkScores = frameworkWithScoreMap.get(frameworkWithOwner.name)
     if (thisFrameworkScores == null) continue
 
-    const normalizedIssueCloseSpeedScore = normalizeFromList({
-      target: thisFrameworkScores.issueCloseSpeedScore,
-      list: Array.from(frameworkWithScoreMap.values()).map((v) => v.issueCloseSpeedScore),
-    })
-    const normalizedIssueCommentByCollaboratorScore = normalizeFromList({
-      target: thisFrameworkScores.issueCommentByCollaboratorScore,
-      list: Array.from(frameworkWithScoreMap.values()).map(
-        (v) => v.issueCommentByCollaboratorScore,
-      ),
-    })
-    const normalizedAbandonedScore = normalizeFromList({
-      target: thisFrameworkScores.abandonedScore,
-      list: Array.from(frameworkWithScoreMap.values()).map((v) => v.abandonedScore),
-    })
+    const normalizedIssueCloseSpeedScore =
+      normalizeFromList({
+        target: thisFrameworkScores.issueCloseSpeedScore,
+        list: Array.from(frameworkWithScoreMap.values()).map((v) => v.issueCloseSpeedScore),
+      }) || 0 // 0で割るなどしてNaNが発生したときに、0に丸め込む
+    const normalizedIssueCommentByCollaboratorScore =
+      normalizeFromList({
+        target: thisFrameworkScores.issueCommentByCollaboratorScore,
+        list: Array.from(frameworkWithScoreMap.values()).map(
+          (v) => v.issueCommentByCollaboratorScore,
+        ),
+      }) || 0
+    const normalizedAbandonedScore =
+      normalizeFromList({
+        target: thisFrameworkScores.abandonedScore,
+        list: Array.from(frameworkWithScoreMap.values()).map((v) => v.abandonedScore),
+      }) || 0
 
     const maintenanceScore = normalizedIssueCloseSpeedScore
       .plus(normalizedIssueCommentByCollaboratorScore)
