@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client'
+import dayjs from 'dayjs'
+import { Decimal } from 'decimal.js'
 import {
   GetCommitHistory,
   GetCommitHistoryQuery,
   GetCommitHistoryQueryVariables,
 } from '../generated/graphql'
 import { urql } from '../modules/urql'
-import dayjs from 'dayjs'
-import { Decimal } from 'decimal.js'
 
 const prisma = new PrismaClient()
 

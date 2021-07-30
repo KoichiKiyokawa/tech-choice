@@ -1,4 +1,4 @@
-# data-gathering
+# cron
 
 データを取得したり、DB に保存したるする処理を書く
 
