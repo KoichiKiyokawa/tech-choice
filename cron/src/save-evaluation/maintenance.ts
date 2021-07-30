@@ -66,6 +66,7 @@ async function main() {
     nameWithMaintenanceScore.set(frameworkWithOwner.name, maintenanceScore)
   }
 
+  // 正規化してDBに保存する
   for (const frameworkWithOwner of FRAMEWORK_WITH_OWNER_LIST) {
     const thisFrameworkScore = nameWithMaintenanceScore.get(frameworkWithOwner.name)!
     const normalizedMaintenanceScore = normalizeFromList({
