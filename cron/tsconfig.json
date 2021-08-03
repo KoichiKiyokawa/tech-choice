@@ -3,6 +3,8 @@
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
+    "target": "ES2017",
+    "moduleResolution": "node",
     "lib": ["esnext", "dom"],
     "esModuleInterop": true
   }

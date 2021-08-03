@@ -23,3 +23,22 @@ export const normalizeFromList = ({ target, list }: { target: Decimal; list: Dec
  */
 export const sum = (nums: readonly Decimal[]) =>
   nums.reduce((acc, num) => acc.plus(num), new Decimal(0))
+
+/**
+ * コンビネーションのイテレーションを行うためのジェネレータ関数
+ * @example
+ * ```
+ * for (const [a, b] of combinationIterator([1, 2, 3]])) {
+ *   console.log([a, b])
+ * }
+ * // => [1, 2], [1, 3], [2, 3]
+ * ```
+ */
+export function* combinationIterator<T>(items: readonly T[]): Generator<T[], void, unknown> {
+  const { length } = items
+  for (let i = 0; i < length; i++) {
+    for (let j = i + 1; j < length; j++) {
+      yield [items[i], items[j]]
+    }
+  }
+}
