@@ -38,5 +38,5 @@ describe('convert to vector', () => {
 describe('cosine similarity', () => {
   const codeA = 'import { A } from "foo"'
   const codeB = 'import { B } from "bar"'
-  expect(calcCodeSimilarity(codeA, codeB).toNumber()).toBe(0.7857142857142857)
+  expect(calcCodeSimilarity(codeA, codeB).toNumber()).toBe(0.6470588235294118)
 })

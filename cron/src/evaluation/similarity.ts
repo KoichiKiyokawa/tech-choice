@@ -1,37 +1,6 @@
 import { Decimal } from 'decimal.js'
-import fetch from 'node-fetch'
-import { countBy, sum } from 'rhodash'
-import { combinationIterator } from '../utils/math'
-
-// test
-async function fetchCodeFromUrl(url: string): Promise<string> {
-  return fetch(url).then((res) => res.text())
-}
-
-const frameworkNameToURL: { name: string; url: string }[] = [
-  {
-    name: 'react',
-    url: 'https://raw.githubusercontent.com/gothinkster/react-redux-realworld-example-app/master/src/components/Login.js',
-  },
-  {
-    name: 'vue',
-    url: 'https://raw.githubusercontent.com/gothinkster/vue-realworld-example-app/master/src/views/Login.vue',
-  },
-  {
-    name: 'svelte',
-    url: 'https://raw.githubusercontent.com/sveltejs/realworld/master/src/routes/login/index.svelte',
-  },
-]
-
-;(async function () {
-  for (const [fwA, fwB] of combinationIterator(frameworkNameToURL)) {
-    const [codeA, codeB] = await Promise.all([fwA.url, fwB.url].map(fetchCodeFromUrl))
-    const sim = calcCodeSimilarity(codeA, codeB)
-    console.log(`${fwA.name} vs ${fwB.name} : ${sim}`)
-  }
-})()
-
-// test kokomade
+import { countBy } from 'rhodash'
+import { Vector } from '../utils/math'
 
 /**
  * 与えられた2つのコードの類似度を算出する
@@ -100,8 +69,7 @@ export function divideByNgram(str: string, N = 2): string[] {
  * @private
  */
 export function calcCosineSimilarityFromStringArrays(elementsA: string[], elementsB: string[]) {
-  // 1. 出現回数に応じてベクトルに変換する。
-  const allElementsSorted: string[] = elementsA.concat(elementsB).sort() // すべての文字を格納する
+  const allElementsSorted: string[] = [...new Set(elementsA.concat(elementsB))].sort() // すべての文字を格納する
   const vectorA: Vector = convertVectorFromStringArray(elementsA, allElementsSorted)
   const vectorB: Vector = convertVectorFromStringArray(elementsB, allElementsSorted)
   return vectorA.cosineSimilarity(vectorB)
@@ -117,40 +85,4 @@ export function calcCosineSimilarityFromStringArrays(elementsA: string[], elemen
  */
 export function convertVectorFromStringArray(target: string[], candidates: string[]): Vector {
   return new Vector(candidates.map((candidate) => countBy(target, (t) => t === candidate)))
-}
-
-/**
- * ベクトルを表すクラス
- */
-class Vector {
-  constructor(public elements: number[]) {}
-
-  /**
-   * ノルムを返す
-   */
-  get norm(): Decimal {
-    return new Decimal(sum(this.elements)).sqrt()
-  }
-
-  multiply(other: Vector): Decimal {
-    if (this.elements.length !== other.elements.length)
-      throw Error('[Vector.prototype.multiply] different length')
-
-    let result = new Decimal(0)
-    const { length } = this.elements
-    for (let i = 0; i < length; i++) {
-      result = result.plus(new Decimal(this.elements[i]).times(other.elements[i]))
-    }
-
-    return result
-  }
-
-  /**
-   * 2つのベクトルのコサイン類似度を計算する
-   * @param other もう一方のベクトル
-   * @returns コサイン類似度
-   */
-  cosineSimilarity(other: Vector): Decimal {
-    return this.multiply(other).dividedBy(this.norm.times(other.norm))
-  }
 }

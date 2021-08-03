@@ -1,5 +1,11 @@
 import Decimal from 'decimal.js'
-import { normalize, normalizeFromList, sum } from '../../src/utils/math'
+import {
+  combinationIterator,
+  normalize,
+  normalizeFromList,
+  sum,
+  Vector,
+} from '../../src/utils/math'
 
 describe('普通の正規化', () => {
   it('targetが20, 最小値が0で最大値が100のとき、0.2を返す', () => {
@@ -36,5 +42,27 @@ describe('数字配列の総和', () => {
   it('0.1, 0.2, 0.3', () => {
     const nums = [0.1, 0.2, 0.3].map((n) => new Decimal(n))
     expect(sum(nums).equals(new Decimal(0.6))).toBe(true)
+  })
+})
+
+describe('コンビネーション', () => {
+  it('combination for [1, 2, 3]', () => {
+    expect([...combinationIterator([1, 2, 3])]).toEqual([
+      [1, 2],
+      [1, 3],
+      [2, 3],
+    ])
+  })
+})
+describe('ベクトル', () => {
+  const vecA = new Vector([1, 2, 3])
+  const vecB = new Vector([4, 5, 6])
+
+  it('ベクトルの長さ', () => {
+    expect(new Vector([3, 4]).norm.toNumber()).toBe(5)
+  })
+
+  it('ベクトルの内積', () => {
+    expect(vecA.dot(vecB).toNumber()).toBe(1 * 4 + 2 * 5 + 3 * 6)
   })
 })
