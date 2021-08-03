@@ -8,12 +8,12 @@ import { Vector } from '../utils/math'
  * @param codeB ふたつめのコード
  * @returns {Float} 類似度
  */
-export function calcCodeSimilarity(codeA: string, codeB: string): Decimal {
+export function calcCodeSimilarity(codeA: string, codeB: string, options?: { N: number }): Decimal {
   const preprocessedCodeA = new Preprocessor(codeA).exec()
   const preprocessedCodeB = new Preprocessor(codeB).exec()
 
-  const dividedA = divideByNgram(preprocessedCodeA)
-  const dividedB = divideByNgram(preprocessedCodeB)
+  const dividedA = divideByNgram(preprocessedCodeA, options?.N)
+  const dividedB = divideByNgram(preprocessedCodeB, options?.N)
 
   return calcCosineSimilarityFromStringArrays(dividedA, dividedB)
 }
@@ -69,9 +69,9 @@ export function divideByNgram(str: string, N = 2): string[] {
  * @private
  */
 export function calcCosineSimilarityFromStringArrays(elementsA: string[], elementsB: string[]) {
-  const allElementsSorted: string[] = [...new Set(elementsA.concat(elementsB))].sort() // すべての文字を格納する
-  const vectorA: Vector = convertVectorFromStringArray(elementsA, allElementsSorted)
-  const vectorB: Vector = convertVectorFromStringArray(elementsB, allElementsSorted)
+  const allElementsSetSorted: string[] = [...new Set(elementsA.concat(elementsB))].sort() // すべての文字を格納する
+  const vectorA: Vector = convertVectorFromStringArray(elementsA, allElementsSetSorted)
+  const vectorB: Vector = convertVectorFromStringArray(elementsB, allElementsSetSorted)
   return vectorA.cosineSimilarity(vectorB)
 }
 

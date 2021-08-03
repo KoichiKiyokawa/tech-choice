@@ -8,9 +8,10 @@ async function main() {
 
   await prisma.framework.createMany({
     skipDuplicates: true,
-    data: FRAMEWORK_WITH_OWNER_LIST.map(({ name, owner }) => ({
+    data: FRAMEWORK_WITH_OWNER_LIST.map(({ name, owner, codeURL }) => ({
       name,
       owner,
+      codeURL,
     })),
   })
 }
