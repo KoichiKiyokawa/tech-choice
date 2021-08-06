@@ -88,15 +88,15 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@sveltejs/adapter-static@^1.0.0-next.13":
-  version "1.0.0-next.13"
-  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-1.0.0-next.13.tgz#5cba8f2905a5a7b956c2663d73ac02f7eb6da7c4"
-  integrity sha512-zaXJlWK9JfrjrE6nG5etB8kf4DSkbE3H8Ql6gmCk3WjdvpY85a60TMYBU9OK2iunkqpHnPYiMUGEnOGYmWlLYA==
+"@sveltejs/adapter-static@^1.0.0-next.16":
+  version "1.0.0-next.16"
+  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-1.0.0-next.16.tgz#656c90666edd730ccc9bfb89e3f7ece56e7ac7c8"
+  integrity sha512-xGFcg+GHF0BL1fyWx2vCzlYj4S4R+Od9cF00soo1TVp/scGOi1G9grSYYW4x5H+iDn1sscoJ65OGBGWIcOgrXg==
 
-"@sveltejs/kit@1.0.0-next.139":
-  version "1.0.0-next.139"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.139.tgz#1459cfccfd7058a0a454eb91b183708ca971bc93"
-  integrity sha512-V/OG9FIuq8Fzh08x0VZx1ZX5MjCM8lD/vpk/cM/RyGJSky+KKYgch7mWSY6XP28vUsl1HUg+HMuho/rKqmwe9A==
+"@sveltejs/kit@1.0.0-next.142":
+  version "1.0.0-next.142"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.0.0-next.142.tgz#00da0c9fce8433e63e84189cdb2f1a50668324e9"
+  integrity sha512-MxoQz/kxlYOXVHETlxh8+wIvfZ4N2EScDqyuaWwFHqWg6fj6FHADJfZ7JCniqvAe8ME2jA9Om/gVR8e1oY04+w==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^1.0.0-next.14"
     cheap-watch "^1.0.3"
