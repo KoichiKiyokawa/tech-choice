@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Similarity } from '@prisma/client'
 import { PrismaService } from '../prisma.service'
 import { FrameworkWithScore } from './framework.type'
 
@@ -12,5 +13,9 @@ export class FrameworkService {
 
   async getAllFrameworkScores(): Promise<FrameworkWithScore[]> {
     return this.prisma.framework.findMany({ include: { score: true } })
+  }
+
+  async getAllFrameworkSimilarities(): Promise<Similarity[]> {
+    return this.prisma.similarity.findMany()
   }
 }

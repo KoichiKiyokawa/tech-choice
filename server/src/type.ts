@@ -1,1 +1,1 @@
-export { Score } from '@prisma/client'
+export { Score, Similarity } from '@prisma/client'

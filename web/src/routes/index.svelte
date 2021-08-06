@@ -1,53 +1,91 @@
 <script lang="ts">
   import type { FrameworkWithScore } from '@server/framework/framework.type'
-  import type { Score } from '@server/type'
-  import { DataTable } from 'carbon-components-svelte'
+  import type { Similarity } from '@server/type'
+  import { DataTable, MultiSelect, Tag } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
   import { baseFetch } from '~/utils/fetch'
 
-  let evaluations: {
-    key: keyof Pick<Score, 'developmentActivity' | 'maintenance' | 'popularity'>
-    value: string
-    weight: number
-  }[] = [
+  /**
+   * 類似度の比較を行う対象のフレームワークのidを格納した配列
+   */
+  let similarityTargetIds: string[] = []
+  let similarityTargets: FrameworkWithScore[] // for type def
+  $: similarityTargets = similarityTargetIds.flatMap(
+    (idString) => frameworkWithScores.find((f) => f.id === Number(idString)) ?? [],
+  )
+  $: evaluations = [
     { key: 'developmentActivity', value: '開発の活発さ', weight: 0 },
     { key: 'maintenance', value: 'メンテナンス', weight: 0 },
     { key: 'popularity', value: '人気度', weight: 0 },
+    ...similarityTargets.map((framework) => ({
+      key: `${framework.name}_similarity`,
+      value: `${framework.name}との類似度`,
+      weight: 0,
+    })),
   ]
-  const headers = [
+  $: headers = [
     { key: 'name', value: 'フレームワーク' },
     ...evaluations,
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
 
-  // 重みの入力欄の数値を格納しておく
-  let weightInputs: Record<typeof evaluations[number]['key'], number> = {
-    developmentActivity: 0,
-    maintenance: 0,
-    popularity: 0,
-  }
-
   let frameworkWithScores: FrameworkWithScore[] = []
-
+  let frameworkSimularities: Similarity[] = []
   ;(async () => {
-    const { data, error } = await baseFetch<void, FrameworkWithScore[]>('frameworks/scores')
-    if (error != null) return alert('failed to fetch data')
+    const [
+      { data: _frameworkWithScores, error: frameworkWithScoresError },
+      { data: _similarities, error: similaritiesError },
+    ] = await Promise.all([
+      baseFetch<void, FrameworkWithScore[]>('frameworks/scores'),
+      baseFetch<void, Similarity[]>('frameworks/similarities'),
+    ])
+    if (frameworkWithScoresError != null) return alert('failed to fetch scores')
+    if (similaritiesError != null) return alert('failed to fetch similarities')
 
-    frameworkWithScores = data ?? []
+    frameworkWithScores = _frameworkWithScores ?? []
+    frameworkSimularities = _similarities ?? []
   })()
 
-  $: rows = frameworkWithScores.map((fws) => ({
-    ...fws,
+  /**
+   * サーバーから取得した類似度一覧に対して、検索をかける
+   * @param targetId 基準となるフレームワークの id
+   * @param comparisonId 比較対象となるフレームワークの id
+   * @returns {float} 2つの類似度
+   */
+  function _getSimilarityBetween(targetId: number, comparisonId: number): number | null {
+    if (targetId === comparisonId) return 1
+    return (
+      frameworkSimularities.find(
+        (sim) =>
+          (sim.targetId === targetId && sim.comparisonId === comparisonId) ||
+          (sim.targetId === comparisonId && sim.comparisonId === targetId), // target と comparison をひっくり返したパターンも考えられる
+      )?.cosineSimilarity ?? null
+    )
+  }
+
+  $: rows = frameworkWithScores.map((eachFramework) => ({
+    ...eachFramework,
+    // 開発の活発さ、メンテンナンスなどのセル
     ...Object.fromEntries(
-      Object.entries(fws.score ?? {}).map(([key, val]) => [
+      Object.entries(eachFramework.score ?? {}).map(([key, val]) => [
         key,
         _roundByTheDigits(val, settings.digits),
       ]),
     ),
-    weightedScore: evaluations.reduce(
-      (sum, evaluation) => sum + (fws.score?.[evaluation.key] ?? 0) * evaluation.weight,
-      0,
+    ...Object.fromEntries(
+      similarityTargets.map((similarityTarget) => [
+        `${similarityTarget.name}_similarity`,
+        _getSimilarityBetween(eachFramework.id, similarityTarget.id) ?? '-',
+      ]),
     ),
+    weightedScore: evaluations.reduce((sum, evaluation) => {
+      const { score } = eachFramework
+      if (score === null) return sum
+
+      const { key } = evaluation
+      console.log(key in score)
+      return sum + (key in score ? score[key as keyof typeof score] ?? 0 : 0) * evaluation.weight
+    }, 0),
   }))
 
   function _roundByTheDigits(num: number, digits: number) {
@@ -59,19 +97,27 @@
    * 重みのバリデーションを行い、有効であれば反映する。
    */
   function handleWeightInputChange(e: { currentTarget: HTMLInputElement }) {
-    if (!_validateWeights(Object.values(weightInputs))) {
+    // 重みの入力欄が`<input name={<key>} class="weight-input" />`と設置されている前提
+    const weightInputElems: HTMLInputElement[] = Array.from(
+      document.querySelectorAll<HTMLInputElement>('.weight-input'),
+    )
+    if (!_validateWeights(weightInputElems.map((elem) => elem.valueAsNumber))) {
       e.currentTarget.setCustomValidity('invalid weight')
       e.currentTarget.reportValidity()
       return
     }
 
     e.currentTarget.setCustomValidity('')
-    evaluations = evaluations.map((ev) => ({ ...ev, weight: weightInputs[ev.key] }))
+    evaluations = evaluations.map((ev) => ({
+      ...ev,
+      weight: weightInputElems.find((elem) => elem.name === ev.key)?.valueAsNumber ?? 0,
+    }))
   }
 
   function _validateWeights(weights: number[]): boolean {
     // 重みの絶対値が1を超えるものをはじく
     if (weights.some((w) => Math.abs(w) > 1)) return false
+    // 重みの合計に関するバリデーション
     // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
     return true
   }
@@ -79,9 +125,44 @@
   let settings = {
     digits: 3, // 表示する少数の桁数
   }
+
+  const presetHandler = {
+    beginner() {
+      alert('TODO')
+    },
+    stabilityOriented() {
+      alert('TODO')
+    },
+    activityOriented() {
+      alert('TODO')
+    },
+  }
 </script>
 
 <div class="container">
+  <h2>類似度の比較を行うフレームワーク</h2>
+  <MultiSelect
+    spellcheck="false"
+    filterable
+    placeholder="フレームワークを検索..."
+    bind:selectedIds={similarityTargetIds}
+    items={frameworkWithScores.map((framework) => ({
+      id: String(framework.id),
+      text: framework.name,
+    }))}
+  />
+  {#each similarityTargets as similarityTarget}
+    <Tag>{similarityTarget.name}</Tag>
+  {/each}
+
+  <h2>プリセット</h2>
+  <ul class="preset-wrapper">
+    <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
+    <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
+    <li><button on:click={presetHandler.activityOriented}>開発の活発さ重視</button></li>
+  </ul>
+
+  <h2>結果</h2>
   <DataTable stickyHeader sortable {headers} {rows} />
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
@@ -91,15 +172,13 @@
         <input
           type="number"
           step="0.01"
-          bind:value={weightInputs[evaluation.key]}
           on:change={handleWeightInputChange}
+          name={evaluation.key}
+          class="weight-input"
         />
       </div>
     {/each}
   </div>
-
-  <h2>プリセット</h2>
-  <p>TODO</p>
 
   <h2>設定</h2>
   <label>
@@ -115,7 +194,18 @@
     padding-top: 2rem;
   }
   h2 {
-    margin-top: 1rem;
+    margin-top: 2rem;
+  }
+
+  .preset-wrapper {
+    display: flex;
+  }
+  .preset-wrapper > li + li {
+    margin-left: 1rem;
+  }
+
+  .preset-wrapper button {
+    cursor: pointer;
   }
 
   input:invalid {

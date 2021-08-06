@@ -14,4 +14,9 @@ export class FrameworkController {
   getAllFrameworkScores() {
     return this.frameworkService.getAllFrameworkScores()
   }
+
+  @Get('/similarities')
+  getAllFrameworkSimilarities() {
+    return this.frameworkService.getAllFrameworkSimilarities()
+  }
 }
