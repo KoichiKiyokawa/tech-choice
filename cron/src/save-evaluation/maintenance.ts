@@ -75,7 +75,7 @@ async function main() {
     })
     const operation = { maintenance: normalizedMaintenanceScore.toNumber() }
     await prisma.framework.update({
-      where: { owner_name: frameworkWithOwner },
+      where: { owner_name: { name: frameworkWithOwner.name, owner: frameworkWithOwner.owner } },
       data: { score: { upsert: { create: operation, update: operation } } },
     })
   }
