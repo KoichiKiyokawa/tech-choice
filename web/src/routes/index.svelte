@@ -4,6 +4,7 @@
   import { DataTable, MultiSelect, Tag } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
   import { baseFetch } from '~/utils/fetch'
+  import { roundByTheDigits } from '~/utils/math'
 
   /**
    * 類似度の比較を行う対象のフレームワークのidを格納した配列
