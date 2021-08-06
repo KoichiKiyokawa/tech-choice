@@ -18,3 +18,4 @@ node_modules/
 
 # in favor of using secrets.yaml
 .env
+backup

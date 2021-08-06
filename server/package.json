@@ -23,7 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "all:check": "yarn lint && yarn tsc --noEmit && yarn test",
     "deploy": "gcloud app deploy --project tech-choice ",
-    "postinstall": "prisma generate && yarn remove prisma"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.2",
