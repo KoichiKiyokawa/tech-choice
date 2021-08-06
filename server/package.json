@@ -22,7 +22,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "all:check": "yarn lint && yarn tsc --noEmit && yarn test",
-    "deploy": "gcloud app deploy --project tech-choice ",
+    "deploy": "yarn build && gcloud app deploy --project tech-choice",
     "postinstall": "prisma generate"
   },
   "dependencies": {
