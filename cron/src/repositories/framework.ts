@@ -6,13 +6,15 @@ const prisma = new PrismaClient()
 async function main() {
   await prisma.$connect()
 
-  await prisma.framework.createMany({
-    skipDuplicates: true,
-    data: FRAMEWORK_WITH_OWNER_LIST.map(({ name, owner }) => ({
-      name,
-      owner,
-    })),
-  })
+  await Promise.all(
+    FRAMEWORK_WITH_OWNER_LIST.map((operator) =>
+      prisma.framework.upsert({
+        create: operator,
+        update: operator,
+        where: { owner_name: { name: operator.name, owner: operator.owner } },
+      }),
+    ),
+  )
 }
 
 main()
