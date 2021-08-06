@@ -9,16 +9,20 @@
    * 類似度の比較を行う対象のフレームワークのidを格納した配列
    */
   let similarityTargetIds: string[] = []
-  let similarityTargets: FrameworkWithScore[] // for type def
+  /**
+   * 類似度の比較を行う対象のフレームワーク自体を格納した配列
+   */
+  let similarityTargets: FrameworkWithScore[]
   $: similarityTargets = similarityTargetIds.flatMap(
     (idString) => frameworkWithScores.find((f) => f.id === Number(idString)) ?? [],
   )
+  const _getSimilarityKey = (framework: FrameworkWithScore) => `${framework.name}_similarity`
   $: evaluations = [
     { key: 'developmentActivity', value: '開発の活発さ', weight: 0 },
     { key: 'maintenance', value: 'メンテナンス', weight: 0 },
     { key: 'popularity', value: '人気度', weight: 0 },
     ...similarityTargets.map((framework) => ({
-      key: `${framework.name}`,
+      key: _getSimilarityKey(framework),
       value: `${framework.name}との類似度`,
       weight: 0,
     })),
@@ -28,8 +32,6 @@
     ...evaluations,
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
-
-  $: console.log(evaluations)
 
   let frameworkWithScores: FrameworkWithScore[] = []
   let frameworkSimularities: Similarity[] = []
@@ -54,14 +56,14 @@
    * @param comparisonId 比較対象となるフレームワークの id
    * @returns {float} 2つの類似度
    */
-  function _getSimilarityBetween(targetId: number, comparisonId: number): number | null {
+  function _getSimilarityBetween(targetId: number, comparisonId: number): number {
     if (targetId === comparisonId) return 1
     return (
       frameworkSimularities.find(
         (sim) =>
           (sim.targetId === targetId && sim.comparisonId === comparisonId) ||
           (sim.targetId === comparisonId && sim.comparisonId === targetId), // target と comparison をひっくり返したパターンも考えられる
-      )?.cosineSimilarity ?? null
+      )?.cosineSimilarity ?? 0
     )
   }
 
@@ -73,17 +75,22 @@
       ...Object.fromEntries(
         Object.entries(eachFramework.score ?? {}).map(([key, val]) => [
           key,
-          _roundByTheDigits(val, settings.digits),
+          roundByTheDigits(val, settings.digits),
         ]),
       ),
+      // 類似度に関するセル
       ...Object.fromEntries(
         similarityTargets.map((similarityTarget) => [
-          `${similarityTarget.name}_similarity`,
-          _getSimilarityBetween(eachFramework.id, similarityTarget.id) ?? '-',
+          _getSimilarityKey(similarityTarget),
+          roundByTheDigits(
+            _getSimilarityBetween(eachFramework.id, similarityTarget.id),
+            settings.digits,
+          ),
         ]),
       ),
     }
 
+    // 重み付けスコアのセル
     const weightedScore: number = evaluations.reduce((sum, evaluation) => {
       const { score } = eachFramework
       if (score === null) return sum
@@ -97,11 +104,6 @@
     }, 0)
     return { ...row, weightedScore }
   })
-
-  function _roundByTheDigits(num: number, digits: number) {
-    if (digits <= 0) digits = 2
-    return Math.round(num * 10 ** digits) / 10 ** digits
-  }
 
   /**
    * 重みのバリデーションを行い、有効であれば反映する。
@@ -120,9 +122,7 @@
     e.currentTarget.setCustomValidity('')
     evaluations = evaluations.map((ev) => {
       if (ev.key === e.currentTarget.name) {
-        {
-          console.log((ev.weight = e.currentTarget.valueAsNumber))
-        }
+        ev.weight = e.currentTarget.valueAsNumber
       }
       return ev
     })
