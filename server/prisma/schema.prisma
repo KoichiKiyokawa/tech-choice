@@ -17,13 +17,15 @@ model Framework {
   owner   String // リポジトリのオーナー名 e.g. sveltjs, vuejs
   codeURL String? // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
 
-  commits       Commit[]
-  issues        Issue[]
-  issueComments IssueComment[]
-  collaborators Collaborator[]
-  downloads     Download[]
-  stars         Star[]
-  score         Score?
+  commits               Commit[]
+  issues                Issue[]
+  issueComments         IssueComment[]
+  collaborators         Collaborator[]
+  downloads             Download[]
+  stars                 Star[]
+  score                 Score?
+  similarities          Similarity[]   @relation("SimilarityTarget")
+  SimilarityComparisons Similarity[]   @relation("SimilarityComparison")
   @@unique([owner, name])
 }
 
@@ -92,4 +94,14 @@ model Score {
   maintenance         Float     @default(0) // メンテナンスがされているか
   popularity          Float     @default(0) // 人気
   developmentActivity Float     @default(0) // 開発の活発さ
+}
+
+model Similarity {
+  target           Framework @relation("SimilarityTarget", fields: [targetId], references: [id]) // 基準となるフレームワーク
+  targetId         Int
+  comparison       Framework @relation(name: "SimilarityComparison", fields: [comparisonId], references: [id]) // 比較対象となるフレームワーク
+  comparisonId     Int
+  cosineSimilarity Float // コサイン類似度の値 0 ~ 1
+
+  @@id([targetId, comparisonId])
 }

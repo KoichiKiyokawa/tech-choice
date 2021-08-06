@@ -1,4 +1,6 @@
-export const FRAMEWORK_WITH_OWNER_LIST = [
+export type Frameworks = 'svelte' | 'react' | 'vue'
+
+export const FRAMEWORK_WITH_OWNER_LIST: { name: Frameworks; owner: string; codeURL: string }[] = [
   {
     name: 'svelte',
     owner: 'sveltejs',
@@ -17,6 +19,4 @@ export const FRAMEWORK_WITH_OWNER_LIST = [
     codeURL:
       'https://raw.githubusercontent.com/gothinkster/vue-realworld-example-app/master/src/views/Login.vue',
   },
-] as const
-
-export type Frameworks = typeof FRAMEWORK_WITH_OWNER_LIST[number]['name']
+]
