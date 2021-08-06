@@ -1,4 +1,5 @@
 import { PrismaClient } from '.prisma/client'
+import { pick } from 'rhodash'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchCommits } from '../fetcher/fetch-commits'
 
@@ -16,7 +17,7 @@ async function main() {
     const frameworkWithOwner = FRAMEWORK_WITH_OWNER_LIST[i]
     const frameworkResult = await prisma.framework.findUnique({
       where: {
-        owner_name: frameworkWithOwner,
+        owner_name: pick(frameworkWithOwner, ['name', 'owner']),
       },
     })
     if (frameworkResult == undefined) continue
