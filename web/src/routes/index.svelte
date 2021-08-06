@@ -93,11 +93,7 @@
 
     // 重み付けスコアのセル
     const weightedScore: number = evaluations.reduce((sum, evaluation) => {
-      const { score } = eachFramework
-      if (score === null) return sum
-
       const thisEavaluationValue = row[evaluation.key]
-
       return (
         sum +
         (typeof thisEavaluationValue === 'number' ? thisEavaluationValue : 0) * evaluation.weight
