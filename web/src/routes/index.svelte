@@ -18,7 +18,7 @@
     { key: 'maintenance', value: 'メンテナンス', weight: 0 },
     { key: 'popularity', value: '人気度', weight: 0 },
     ...similarityTargets.map((framework) => ({
-      key: `${framework.name}_similarity`,
+      key: `${framework.name}`,
       value: `${framework.name}との類似度`,
       weight: 0,
     })),
@@ -28,6 +28,8 @@
     ...evaluations,
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
+
+  $: console.log(evaluations)
 
   let frameworkWithScores: FrameworkWithScore[] = []
   let frameworkSimularities: Similarity[] = []
@@ -63,30 +65,38 @@
     )
   }
 
-  $: rows = frameworkWithScores.map((eachFramework) => ({
-    ...eachFramework,
-    // 開発の活発さ、メンテンナンスなどのセル
-    ...Object.fromEntries(
-      Object.entries(eachFramework.score ?? {}).map(([key, val]) => [
-        key,
-        _roundByTheDigits(val, settings.digits),
-      ]),
-    ),
-    ...Object.fromEntries(
-      similarityTargets.map((similarityTarget) => [
-        `${similarityTarget.name}_similarity`,
-        _getSimilarityBetween(eachFramework.id, similarityTarget.id) ?? '-',
-      ]),
-    ),
-    weightedScore: evaluations.reduce((sum, evaluation) => {
+  $: rows = frameworkWithScores.map((eachFramework) => {
+    const row: { id: number } & Record<string, string | number> = {
+      id: eachFramework.id,
+      name: eachFramework.name,
+      // 開発の活発さ、メンテンナンスなどのセル
+      ...Object.fromEntries(
+        Object.entries(eachFramework.score ?? {}).map(([key, val]) => [
+          key,
+          _roundByTheDigits(val, settings.digits),
+        ]),
+      ),
+      ...Object.fromEntries(
+        similarityTargets.map((similarityTarget) => [
+          `${similarityTarget.name}_similarity`,
+          _getSimilarityBetween(eachFramework.id, similarityTarget.id) ?? '-',
+        ]),
+      ),
+    }
+
+    const weightedScore: number = evaluations.reduce((sum, evaluation) => {
       const { score } = eachFramework
       if (score === null) return sum
 
-      const { key } = evaluation
-      console.log(key in score)
-      return sum + (key in score ? score[key as keyof typeof score] ?? 0 : 0) * evaluation.weight
-    }, 0),
-  }))
+      const thisEavaluationValue = row[evaluation.key]
+
+      return (
+        sum +
+        (typeof thisEavaluationValue === 'number' ? thisEavaluationValue : 0) * evaluation.weight
+      )
+    }, 0)
+    return { ...row, weightedScore }
+  })
 
   function _roundByTheDigits(num: number, digits: number) {
     if (digits <= 0) digits = 2
@@ -108,10 +118,14 @@
     }
 
     e.currentTarget.setCustomValidity('')
-    evaluations = evaluations.map((ev) => ({
-      ...ev,
-      weight: weightInputElems.find((elem) => elem.name === ev.key)?.valueAsNumber ?? 0,
-    }))
+    evaluations = evaluations.map((ev) => {
+      if (ev.key === e.currentTarget.name) {
+        {
+          console.log((ev.weight = e.currentTarget.valueAsNumber))
+        }
+      }
+      return ev
+    })
   }
 
   function _validateWeights(weights: number[]): boolean {
