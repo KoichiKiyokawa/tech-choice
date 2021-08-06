@@ -4,6 +4,7 @@
   import { DataTable } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
   import { baseFetch } from '~/utils/fetch'
+  import { roundByTheDigits } from '~/utils/math'
 
   let evaluations: {
     key: keyof Pick<Score, 'developmentActivity' | 'maintenance' | 'popularity'>
@@ -41,7 +42,7 @@
     ...Object.fromEntries(
       Object.entries(fws.score ?? {}).map(([key, val]) => [
         key,
-        _roundByTheDigits(val, settings.digits),
+        roundByTheDigits(val, settings.digits),
       ]),
     ),
     weightedScore: evaluations.reduce(
@@ -49,11 +50,6 @@
       0,
     ),
   }))
-
-  function _roundByTheDigits(num: number, digits: number) {
-    if (digits <= 0) digits = 2
-    return Math.round(num * 10 ** digits) / 10 ** digits
-  }
 
   /**
    * 重みのバリデーションを行い、有効であれば反映する。
