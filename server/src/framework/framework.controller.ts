@@ -1,22 +1,10 @@
-import { Controller, Get } from '@nestjs/common'
-import { FrameworkService } from './framework.service'
+import { prisma } from '../modules/prisma'
 
-@Controller('frameworks')
-export class FrameworkController {
-  constructor(private readonly frameworkService: FrameworkService) {}
-
-  @Get()
-  getAllFramework() {
-    return this.frameworkService.getAllFrameworks()
-  }
-
-  @Get('/scores')
-  getAllFrameworkScores() {
-    return this.frameworkService.getAllFrameworkScores()
-  }
-
-  @Get('/similarities')
-  getAllFrameworkSimilarities() {
-    return this.frameworkService.getAllFrameworkSimilarities()
-  }
+export const FrameworkController = {
+  async getScores() {
+    return prisma.framework.findMany({ include: { score: true } })
+  },
+  async getSimilarities() {
+    return prisma.similarity.findMany()
+  },
 }
