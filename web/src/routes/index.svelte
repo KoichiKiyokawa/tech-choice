@@ -26,7 +26,7 @@
     loading = true
     setTimeout(() => {
       loading = false
-    }, 100)
+    })
   }
 
   const _getSimilarityKey = (framework: FrameworkWithScore) => `${framework.name}_similarity`
