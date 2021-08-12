@@ -74,6 +74,7 @@
     const row: { id: number } & Record<string, string | number> = {
       id: eachFramework.id,
       name: eachFramework.name,
+      officialURL: eachFramework.officialURL ?? '',
       // 開発の活発さ、メンテンナンスなどのセル
       ...Object.fromEntries(
         Object.entries(eachFramework.score ?? {}).map(([key, val]) => [
@@ -179,7 +180,15 @@
   {#if loading}
     <DataTableSkeleton />
   {:else}
-    <DataTable stickyHeader sortable {headers} {rows} />
+    <DataTable stickyHeader sortable {headers} {rows}>
+      <div slot="cell" let:row let:cell>
+        {#if cell.key === 'name'}
+          <a href={row.officialURL} target="_blank">{cell.value}</a>
+        {:else}
+          {cell.value}
+        {/if}
+      </div>
+    </DataTable>
   {/if}
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">

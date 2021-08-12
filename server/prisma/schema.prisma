@@ -12,10 +12,11 @@ generator client {
 
 // React, Vue などのフレームワークに関するデータを格納する
 model Framework {
-  id      Int     @id @default(autoincrement())
-  name    String // フレームワーク名
-  owner   String // リポジトリのオーナー名 e.g. sveltjs, vuejs
-  codeURL String? // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
+  id          Int     @id @default(autoincrement())
+  name        String // フレームワーク名
+  owner       String // リポジトリのオーナー名 e.g. sveltjs, vuejs
+  codeURL     String? // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
+  officialURL String? // そのフレームワークの公式サイトのURL
 
   commits               Commit[]
   issues                Issue[]
