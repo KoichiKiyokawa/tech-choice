@@ -14,6 +14,8 @@ generator client {
 model Framework {
   id          Int      @id @default(autoincrement())
   name        String // フレームワーク名
+  repoName    String? // リポジトリの名前。基本的にはフレームワークの名前と一緒だが、例外的に異なる場合のみ使う
+  npmName     String? // npmでの名前。基本的にはフレームワークの名前と一緒だが、例外的に異なる場合のみ使う
   owner       String // リポジトリのオーナー名 e.g. sveltjs, vuejs
   // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
   // シンプルで、フレームワークのAPIの違いのみを比較しやすいログインコンポーネント or ページを用いる。

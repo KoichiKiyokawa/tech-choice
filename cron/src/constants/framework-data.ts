@@ -70,4 +70,61 @@ export const FRAMEWORK_DATA: { name: Frameworks; codeURLs: string[]; officialURL
     codeURLs: ['https://github.com/ecomfe/san-realworld-app/raw/master/src/user/login.js'],
     officialURL: 'https://baidu.github.io/san/',
   },
+  {
+    name: 'solid',
+    codeURLs: ['https://github.com/solidjs/solid-realworld/raw/master/src/pages/Auth.js'],
+    officialURL: 'https://www.solidjs.com/',
+  },
+  {
+    name: 'angular',
+    codeURLs: [
+      'https://raw.githubusercontent.com/khaledosman/angular-realworld-example-app/master/src/app/auth/auth.component.html',
+      'https://raw.githubusercontent.com/khaledosman/angular-realworld-example-app/master/src/app/auth/auth.component.ts',
+    ],
+    officialURL: 'https://angular.io/',
+  },
+  {
+    name: 'apprun',
+    codeURLs: [
+      'https://raw.githubusercontent.com/gothinkster/apprun-realworld-example-app/master/src/components/signin.tsx',
+    ],
+    officialURL: 'https://apprun.js.org/',
+  },
+  {
+    name: 'dojo',
+    codeURLs: [
+      'https://raw.githubusercontent.com/gothinkster/dojo-realworld-example-app/master/src/widgets/Login.tsx',
+    ],
+    officialURL: 'https://dojo.io/',
+  },
+  {
+    name: 'preact',
+    codeURLs: [
+      'https://raw.githubusercontent.com/mutoe/preact-realworld-example-app/master/public/pages/Auth.tsx',
+    ],
+    officialURL: 'https://preactjs.com/',
+  },
+  {
+    name: 'riot',
+    codeURLs: [
+      'https://raw.githubusercontent.com/iq3addLi/riot_realworld_example_app/master/src/Presentation/ViewController/Login.riot',
+      'https://raw.githubusercontent.com/iq3addLi/riot_realworld_example_app/master/src/Presentation/ViewController/LoginViewController.ts',
+    ],
+    officialURL: 'https://riot.js.org/',
+  },
+  {
+    name: 'stencil',
+    codeURLs: [
+      'https://raw.githubusercontent.com/khaledosman/stencil-realworld-app/master/src/routes/auth/auth-page.tsx',
+    ],
+    officialURL: 'https://stenciljs.com/',
+  },
+  // {
+  //   name: 'wesib',
+  //   codeURLs: [
+  //     'https://raw.githubusercontent.com/wesib/realworld-app/master/src/pages/login/index.html',
+  //     'https://raw.githubusercontent.com/wesib/realworld-app/master/src/pages/login/login.component.ts',
+  //   ],
+  //   officialURL: '',
+  // },
 ]

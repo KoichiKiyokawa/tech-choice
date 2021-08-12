@@ -11,13 +11,17 @@ async function main() {
   /**
    * FRAMEWORK_WITH_OWNER_LISTに格納されている順で、コミットを取得する
    */
-  const allFrameworkCommits = await Promise.all(FRAMEWORK_WITH_OWNER_LIST.map(fetchCommits))
+  const allFrameworkCommits = await Promise.all(
+    FRAMEWORK_WITH_OWNER_LIST.map((fwo) =>
+      fetchCommits({ name: fwo.repoName ?? fwo.name, owner: fwo.owner }),
+    ),
+  )
 
   for (let i = 0; i < FRAMEWORK_WITH_OWNER_LIST.length; i++) {
-    const frameworkWithOwner = FRAMEWORK_WITH_OWNER_LIST[i]
+    const frameworkWithOwner = pick(FRAMEWORK_WITH_OWNER_LIST[i], ['name', 'owner'])
     const frameworkResult = await prisma.framework.findUnique({
       where: {
-        owner_name: pick(frameworkWithOwner, ['name', 'owner']),
+        owner_name: frameworkWithOwner,
       },
     })
     if (frameworkResult == undefined) continue

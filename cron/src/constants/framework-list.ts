@@ -9,8 +9,21 @@ export type Frameworks =
   | 'neo'
   | 'owl'
   | 'san'
+  | 'solid'
+  | 'angular'
+  | 'apprun'
+  | 'dojo'
+  | 'preact'
+  | 'riot'
+  | 'stencil'
+// | 'wesib' // スター数0でマイナーすぎる & web componentsを使っているせいでテンプレート部分のコードが違いすぎるのでスキップ
 
-export const FRAMEWORK_WITH_OWNER_LIST: { name: Frameworks; owner: string }[] = [
+export const FRAMEWORK_WITH_OWNER_LIST: {
+  name: Frameworks
+  repoName?: string
+  npmName?: string
+  owner: string
+}[] = [
   { name: 'react', owner: 'facebook' },
   { name: 'vue', owner: 'vuejs' },
   { name: 'svelte', owner: 'sveltejs' },
@@ -21,4 +34,11 @@ export const FRAMEWORK_WITH_OWNER_LIST: { name: Frameworks; owner: string }[] = 
   { name: 'neo', owner: 'neomjs' },
   { name: 'owl', owner: 'odoo' },
   { name: 'san', owner: 'baidu' },
+  { name: 'solid', owner: 'solidjs' },
+  { name: 'angular', owner: 'angular' },
+  { name: 'apprun', owner: 'yysun' },
+  { name: 'dojo', repoName: 'framework', npmName: '@dojo/framework', owner: 'yysun' },
+  { name: 'preact', owner: 'preactjs' },
+  { name: 'riot', owner: 'riot' },
+  { name: 'stencil', owner: 'ionic-team' },
 ]
