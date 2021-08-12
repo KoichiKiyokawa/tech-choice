@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { FrameworkWithScore } from '@server/framework/framework.type'
   import type { Similarity } from '@server/type'
-  import { DataTable, MultiSelect, Tag } from 'carbon-components-svelte'
+  import { DataTable, DataTableSkeleton, MultiSelect, Tag } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
   import { baseFetch } from '~/utils/fetch'
   import { roundByTheDigits } from '~/utils/math'
@@ -34,6 +34,7 @@
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
 
+  let loading = true
   let frameworkWithScores: FrameworkWithScore[] = []
   let frameworkSimularities: Similarity[] = []
   ;(async () => {
@@ -49,6 +50,7 @@
 
     frameworkWithScores = _frameworkWithScores ?? []
     frameworkSimularities = _similarities ?? []
+    loading = false
   })()
 
   /**
@@ -174,7 +176,11 @@
   </ul>
 
   <h2>結果</h2>
-  <DataTable stickyHeader sortable {headers} {rows} />
+  {#if loading}
+    <DataTableSkeleton />
+  {:else}
+    <DataTable stickyHeader sortable {headers} {rows} />
+  {/if}
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
     <span class="weight-label">重み</span>
