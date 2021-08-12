@@ -1,5 +1,4 @@
 import { PrismaClient } from '.prisma/client'
-import { pick } from 'rhodash'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 
@@ -12,10 +11,9 @@ async function main() {
 
   for (let i = 0; i < FRAMEWORK_WITH_OWNER_LIST.length; i++) {
     const nameWithOwner = FRAMEWORK_WITH_OWNER_LIST[i]
-    const owner_name = pick(nameWithOwner, ['name', 'owner'])
     const { id: frameworkId } =
       (await prisma.framework.findUnique({
-        where: { owner_name },
+        where: { owner_name: nameWithOwner },
       })) ?? {}
     if (frameworkId === undefined) continue
 
@@ -29,13 +27,13 @@ async function main() {
         data: {
           closedAt: issue.closedAt ?? undefined,
           openedAt: issue.createdAt,
-          framework: { connect: { owner_name } },
+          framework: { connect: { owner_name: nameWithOwner } },
           issueComments: {
             create: issue.comments.nodes?.flatMap((comment) =>
               !comment
                 ? []
                 : {
-                    framework: { connect: { owner_name } },
+                    framework: { connect: { owner_name: nameWithOwner } },
                     postedAt: comment.createdAt,
                     body: comment.body,
                     author: comment.author?.login ?? '',
