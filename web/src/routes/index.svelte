@@ -17,6 +17,18 @@
   $: similarityTargets = similarityTargetIds.flatMap(
     (idString) => frameworkWithScores.find((f) => f.id === Number(idString)) ?? [],
   )
+
+  /**
+   * 「類似度の比較を行うフレームワーク」の選択が変更されたときの処理
+   */
+  function onSelectSimilarityTarget() {
+    // 動的にカラムが追加されると、ソートしたときの矢印がバグる。解決策として、loadingを一瞬表示することで、DOMを再生成する
+    loading = true
+    setTimeout(() => {
+      loading = false
+    }, 100)
+  }
+
   const _getSimilarityKey = (framework: FrameworkWithScore) => `${framework.name}_similarity`
   $: evaluations = [
     { key: 'developmentActivity', value: '開発の活発さ', weight: 0 },
@@ -70,6 +82,7 @@
     )
   }
 
+  // テーブルに表示するデータ
   $: rows = frameworkWithScores.map((eachFramework) => {
     const row: { id: number } & Record<string, string | number> = {
       id: eachFramework.id,
@@ -160,6 +173,7 @@
     filterable
     placeholder="フレームワークを検索..."
     bind:selectedIds={similarityTargetIds}
+    on:select={onSelectSimilarityTarget}
     items={frameworkWithScores.map((framework) => ({
       id: String(framework.id),
       text: framework.name,
@@ -178,7 +192,7 @@
 
   <h2>結果</h2>
   {#if loading}
-    <DataTableSkeleton />
+    <DataTableSkeleton rows={rows.length || 5} showHeader={false} showToolbar={false} />
   {:else}
     <DataTable stickyHeader sortable {headers} {rows}>
       <div slot="cell" let:row let:cell>
