@@ -28,7 +28,7 @@ async function main() {
     const codeA = codeAs.join('\n')
     const codeB = codeBs.join('\n')
 
-    // TODO: 他のNものほうが適切な可能性もある
+    // TODO: 他のNのほうが適切な可能性もある
     const sim = calcCodeSimilarity(codeA, codeB, { N: 3 })
 
     const operator: Similarity = {
