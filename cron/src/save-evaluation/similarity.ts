@@ -15,12 +15,20 @@ async function main() {
   const frameworks = await prisma.framework.findMany()
 
   for (const [fwA, fwB] of combinationIterator(frameworks)) {
-    if (fwA.codeURL == null || fwB.codeURL == null) continue
+    if (fwA.codeURLs == null || fwB.codeURLs == null) continue
 
-    const [codeA, codeB] = await Promise.all([fwA.codeURL, fwB.codeURL].map(fetchCodeFromUrl))
-    if (codeA == null || codeB == null) continue
+    const [codeAs, codeBs] = await Promise.all([
+      Promise.all(fwA.codeURLs.map(fetchCodeFromUrl)),
+      Promise.all(fwB.codeURLs.map(fetchCodeFromUrl)),
+    ])
+    if (codeAs.some((code) => code == null))
+      console.error(`[save-evaluation/similarity] fetched code is empty for framework: ${fwA.name}`)
+    if (codeBs.some((code) => code == null))
+      console.error(`[save-evaluation/similarity] fetched code is empty for framework: ${fwB.name}`)
+    const codeA = codeAs.join('\n')
+    const codeB = codeBs.join('\n')
 
-    // TODO: 他のNものほうが適切な可能性もある
+    // TODO: 他のNのほうが適切な可能性もある
     const sim = calcCodeSimilarity(codeA, codeB, { N: 3 })
 
     const operator: Similarity = {

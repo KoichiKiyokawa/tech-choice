@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { delay, pick } from 'rhodash'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../../constants/framework-list'
 import { fetchDownloadsV2 } from '../../fetcher/fetch-downloads-v2'
 
@@ -10,26 +11,30 @@ const prisma = new PrismaClient()
 async function main() {
   await prisma.$connect()
 
-  const allFrameworkDownloads = await Promise.all(FRAMEWORK_WITH_OWNER_LIST.map(fetchDownloadsV2))
-
-  for (let i = 0; i < FRAMEWORK_WITH_OWNER_LIST.length; i++) {
-    const nameWithOwner = FRAMEWORK_WITH_OWNER_LIST[i]
-
+  // API制限に引っかかるため、「すべてのフレームワークを並行にリクエストする」は自重する
+  for (const frameworkWithOwner of FRAMEWORK_WITH_OWNER_LIST) {
     const { id: frameworkId } =
       (await prisma.framework.findUnique({
-        where: { owner_name: nameWithOwner },
+        where: { owner_name: pick(frameworkWithOwner, ['name', 'owner']) },
       })) ?? {}
+    console.log({ frameworkId })
     if (frameworkId === undefined) continue
 
-    const thisFrameworkDownloads = allFrameworkDownloads[i]
+    console.log(frameworkWithOwner)
+    const thisFrameworkDownloads = await fetchDownloadsV2({
+      name: frameworkWithOwner.npmName ?? frameworkWithOwner.name,
+    })
 
     await prisma.download.createMany({
+      skipDuplicates: true,
       data: thisFrameworkDownloads.map((d) => ({
         frameworkId,
         count: d.count,
         downloadedAt: d.downloadedAt,
       })),
     })
+
+    await delay(3000)
   }
 }
 

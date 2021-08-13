@@ -12,11 +12,18 @@ generator client {
 
 // React, Vue などのフレームワークに関するデータを格納する
 model Framework {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String // フレームワーク名
+  repoName    String? // リポジトリの名前。基本的にはフレームワークの名前と一緒だが、例外的に異なる場合のみ使う
+  npmName     String? // npmでの名前。基本的にはフレームワークの名前と一緒だが、例外的に異なる場合のみ使う
   owner       String // リポジトリのオーナー名 e.g. sveltjs, vuejs
-  codeURL     String? // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
+  // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
+  // シンプルで、フレームワークのAPIの違いのみを比較しやすいログインコンポーネント or ページを用いる。
+  // コードが複数のファイルに分かれる場合を想定して、配列で定義する。複数ある場合は、template -> js -> styleの順に格納する
+  codeURLs    String[]
   officialURL String? // そのフレームワークの公式サイトのURL
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   commits               Commit[]
   issues                Issue[]
@@ -68,6 +75,8 @@ model Collaborator {
   name        String // コラボレータの名前
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
+
+  @@unique([frameworkId, name])
 }
 
 // npmのダウンロード履歴。あるフレームワークの、ある日付におけるダウンロード数を記録する
@@ -77,6 +86,8 @@ model Download {
   frameworkId  Int
   downloadedAt DateTime  @db.Date // ある日付
   count        Int // ダウンロード数
+
+  @@unique([frameworkId, downloadedAt])
 }
 
 // star履歴

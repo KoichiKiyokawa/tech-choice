@@ -14,7 +14,7 @@ async function main() {
       return prisma.framework.upsert({
         create: operator,
         update: operator,
-        where: { owner_name: nameWithOwner },
+        where: { owner_name: { name: nameWithOwner.name, owner: nameWithOwner.owner } },
       })
     }),
   )

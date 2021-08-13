@@ -1,4 +1,5 @@
 import { PrismaClient } from '.prisma/client'
+import { pick } from 'rhodash'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'
 
@@ -7,10 +8,14 @@ const prisma = new PrismaClient()
 async function main() {
   await prisma.$connect()
 
-  const allFrameworkIssues = await Promise.all(FRAMEWORK_WITH_OWNER_LIST.map(fetchIssueAndComments))
+  const allFrameworkIssues = await Promise.all(
+    FRAMEWORK_WITH_OWNER_LIST.map((fwo) =>
+      fetchIssueAndComments({ name: fwo.repoName ?? fwo.name, owner: fwo.owner }),
+    ),
+  )
 
   for (let i = 0; i < FRAMEWORK_WITH_OWNER_LIST.length; i++) {
-    const nameWithOwner = FRAMEWORK_WITH_OWNER_LIST[i]
+    const nameWithOwner = pick(FRAMEWORK_WITH_OWNER_LIST[i], ['name', 'owner'])
     const { id: frameworkId } =
       (await prisma.framework.findUnique({
         where: { owner_name: nameWithOwner },
