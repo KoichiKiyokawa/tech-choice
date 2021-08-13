@@ -1,6 +1,6 @@
-import fetch from 'node-fetch'
 import dayjs from 'dayjs'
-import { toRange } from 'rhodash'
+import fetch from 'node-fetch'
+import { chunk, delay, toRange } from 'rhodash'
 import { DateISOstring } from '../types/date'
 
 /**
@@ -16,7 +16,7 @@ type Download = {
 
 /**
  * あるフレームワークの、直近1年間のダウンロード数を取得する
- * @param name フレームワークの名前
+ * @param name フレームワークのnpmで公開している名前
  * @returns 新しい順にダウンロード数を格納した配列
  */
 export async function fetchDownloadsV2({ name }: { name: string }): Promise<Download[]> {
@@ -24,9 +24,19 @@ export async function fetchDownloadsV2({ name }: { name: string }): Promise<Down
   const oneYearAgo = today.subtract(1, 'year')
   const oneYearAgoDiffDays = today.diff(oneYearAgo, 'days') // 一年前の日付が何日前かを取得 365 or 366
 
-  return await Promise.all(
-    toRange(0, oneYearAgoDiffDays).map((dayAgo) => fetchSpecificDayAgo({ name, dayAgo })),
-  )
+  const result: Download[] = []
+  // 10日ごとに並行リクエストを送る
+  for (const dayAgoList of chunk(toRange(0, oneYearAgoDiffDays), 10)) {
+    const thisChunkResult = await Promise.all(
+      dayAgoList.map((dayAgo) => fetchSpecificDayAgo({ name, dayAgo })),
+    )
+    result.push(...thisChunkResult)
+  }
+  return result
+  // API制限にかかりやすくなるため、一年まるごと並行リクエストはしない
+  // return await Promise.all(
+  //   toRange(0, oneYearAgoDiffDays).map((dayAgo) => fetchSpecificDayAgo({ name, dayAgo })),
+  // )
 }
 
 /**
@@ -35,19 +45,35 @@ export async function fetchDownloadsV2({ name }: { name: string }): Promise<Down
  * @param dayAgo 何日前のデータか。当日は0日前とする
  * @private
  */
-async function fetchSpecificDayAgo({
-  name,
-  dayAgo,
-}: {
-  name: string
-  dayAgo: number
-}): Promise<Download> {
+async function fetchSpecificDayAgo(
+  {
+    name,
+    dayAgo,
+  }: {
+    name: string
+    dayAgo: number
+  },
+  retryCount: number = 0,
+): Promise<Download> {
   const dayAgoInstance = dayjs().subtract(dayAgo, 'days')
-  const result: { downloads: number } = await fetch(
-    `${ENDPOINT}/${dayAgoInstance.format('YYYY-MM-DD')}/${name}`,
-  ).then((r) => r.json())
+  try {
+    const res = await fetch(`${ENDPOINT}/${dayAgoInstance.format('YYYY-MM-DD')}/${name}`)
+    if (res.status === 429) throw Error() // Too many requests
 
-  return { count: result.downloads, downloadedAt: dayAgoInstance.startOf('date').toISOString() }
+    const result: { downloads: number } = await res.json()
+    return { count: result.downloads, downloadedAt: dayAgoInstance.startOf('date').toISOString() }
+  } catch (err) {
+    console.error(err)
+    // API制限によってエラーが出る可能性がある。そのためのリトライ処理
+    if (retryCount >= 20) throw err
+
+    await delay(3000)
+    console.log(`retry ${name} ${dayAgo}`)
+
+    return fetchSpecificDayAgo({ name, dayAgo }, retryCount + 1)
+  }
 }
 
-// fetchDownloadsV2({ name: 'svelte' }).then(console.log)
+// fetchDownloadsV2({ name: 'solid-js' }).then((res) =>
+//   fs.writeFileSync('log.log', JSON.stringify(res, null, 2)),
+// )

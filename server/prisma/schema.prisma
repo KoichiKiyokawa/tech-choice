@@ -23,7 +23,7 @@ model Framework {
   codeURLs    String[]
   officialURL String? // そのフレームワークの公式サイトのURL
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
   commits               Commit[]
   issues                Issue[]
@@ -75,6 +75,8 @@ model Collaborator {
   name        String // コラボレータの名前
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
+
+  @@unique([frameworkId, name])
 }
 
 // npmのダウンロード履歴。あるフレームワークの、ある日付におけるダウンロード数を記録する
@@ -84,6 +86,8 @@ model Download {
   frameworkId  Int
   downloadedAt DateTime  @db.Date // ある日付
   count        Int // ダウンロード数
+
+  @@unique([frameworkId, downloadedAt])
 }
 
 // star履歴

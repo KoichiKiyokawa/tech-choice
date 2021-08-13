@@ -18,7 +18,7 @@ async function main() {
     const frameworkWithOwner = FRAMEWORK_WITH_OWNER_LIST[i]
     const frameworkResult = await prisma.framework.findUnique({
       where: {
-        owner_name: frameworkWithOwner,
+        owner_name: { name: frameworkWithOwner.name, owner: frameworkWithOwner.owner },
       },
     })
     if (frameworkResult == undefined) continue

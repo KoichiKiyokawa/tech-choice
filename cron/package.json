@@ -10,7 +10,7 @@
     "@comment prisma:generate": "prismaの型定義を生成する",
     "prisma:generate": "prisma generate",
     "run:all": "yarn run:repositories && yarn run:save-evaluation",
-    "run:repositories": "find src/repositories -name \"*.ts\" | xargs -If yarn ts-node f",
+    "run:repositories": "yarn ts-node src/repositories/framework.ts && find src/repositories -name \"*.ts\" | xargs -If yarn ts-node f",
     "run:save-evaluation": "find src/save-evaluation -name \"*.ts\" | xargs -If yarn ts-node f"
   },
   "dependencies": {
