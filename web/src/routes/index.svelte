@@ -6,21 +6,15 @@
   import { baseFetch } from '~/utils/fetch'
   import { roundByTheDigits } from '~/utils/math'
 
-  /**
-   * 類似度の比較を行う対象のフレームワークのidを格納した配列
-   */
+  /** 類似度の比較を行う対象のフレームワークのidを格納した配列 */
   let similarityTargetIds: string[] = []
-  /**
-   * 類似度の比較を行う対象のフレームワーク自体を格納した配列
-   */
+  /** 類似度の比較を行う対象のフレームワーク自体を格納した配列 */
   let similarityTargets: FrameworkWithScore[]
   $: similarityTargets = similarityTargetIds.flatMap(
     (idString) => frameworkWithScores.find((f) => f.id === Number(idString)) ?? [],
   )
 
-  /**
-   * 「類似度の比較を行うフレームワーク」の選択が変更されたときの処理
-   */
+  /** 「類似度の比較を行うフレームワーク」の選択が変更されたときの処理 */
   function onSelectSimilarityTarget() {
     // 動的にカラムが追加されると、ソートしたときの矢印がバグる。解決策として、loadingを一瞬表示することで、DOMを再生成する
     loading = true
@@ -82,7 +76,7 @@
     )
   }
 
-  // テーブルに表示するデータ
+  /* テーブルに表示するデータ */
   $: rows = frameworkWithScores.map((eachFramework) => {
     const row: { id: number } & Record<string, string | number> = {
       id: eachFramework.id,
@@ -118,9 +112,7 @@
     return { ...row, weightedScore }
   })
 
-  /**
-   * 重みのバリデーションを行い、有効であれば反映する。
-   */
+  /** 重みのバリデーションを行い、有効であれば反映する */
   function handleWeightInputChange(e: { currentTarget: HTMLInputElement }) {
     // 重みの入力欄が`<input name={<key>} class="weight-input" />`と設置されている前提
     const weightInputElems: HTMLInputElement[] = Array.from(
