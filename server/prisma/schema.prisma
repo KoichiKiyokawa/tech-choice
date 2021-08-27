@@ -34,6 +34,7 @@ model Framework {
   score                 Score?
   similarities          Similarity[]   @relation("SimilarityTarget")
   SimilarityComparisons Similarity[]   @relation("SimilarityComparison")
+  question              Question?
   @@unique([owner, name])
 }
 
@@ -116,4 +117,13 @@ model Similarity {
   cosineSimilarity Float // コサイン類似度の値 0 ~ 1
 
   @@id([targetId, comparisonId])
+}
+
+// 各々のフレームワークに関する質問データ(主にStackOverflowを想定する)
+model Question {
+  id          Int       @id // apiから返却される question_id を用いることで冪等性を保つ
+  frameworkId Int
+  framework   Framework @relation(fields: [frameworkId], references: [id])
+  askedAt     DateTime // 質問がされた日時
+  answerCount Int // 回答数
 }
