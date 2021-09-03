@@ -1,12 +1,25 @@
 // StackOverflowでの質問に関するデータを収集、保存する
-import { PrismaClient, Question } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+import dayjs from 'dayjs'
 import fetch from 'node-fetch'
 
 const prisma = new PrismaClient()
 
 async function main() {
   const frameworkList = await prisma.framework.findMany()
-  await Promise.all(frameworkList.map(fetchAndSaveQuestionDataForSpecificFramework))
+  // 並行処理をするとIP制限に引っかかるため、一つづつ処理する。
+  for (const framework of frameworkList) {
+    const lastFetchedQuestion = await prisma.question.findFirst({
+      where: { frameworkId: framework.id },
+      orderBy: { askedAt: 'desc' },
+    })
+    const lastFetchedAt = lastFetchedQuestion?.askedAt
+    await fetchAndSaveQuestionDataForSpecificFramework({
+      id: framework.id,
+      name: framework.name,
+      fromDate: lastFetchedAt,
+    })
+  }
 }
 
 type ApiResult = {
@@ -14,6 +27,8 @@ type ApiResult = {
   has_more: boolean
   quota_max: number
   quota_remaining: number
+  error_name?: 'throttle_violation'
+  error_message?: string
 }
 
 type ApiResultItem = {
@@ -40,24 +55,44 @@ type ApiResultItem = {
 }
 
 /**
- * 特定のフレームワークに対して、StackOverflowでの質問情報を取得する
+ * 特定のフレームワークに対して、StackOverflowでの質問情報を取得する。
+ * APIの制限が1日1万件と厳しいため、「そのフレームワークの取得済みデータの最後の日付(fromDate)」から処理を再開できるようにする
  * @param {number} id フレームワークの DB における ID
  * @param {string} name フレームワークの名前
  */
 async function fetchAndSaveQuestionDataForSpecificFramework({
   id,
   name,
+  fromDate = dayjs().add(-1, 'year').toDate(),
 }: {
   id: number
   name: string
+  fromDate?: Date
 }): Promise<void> {
-  const result: Question[] = []
   let page = 1
   while (true) {
-    const fetchQuestionURL = `https://api.stackexchange.com/2.3/questions?page=${page++}&pagesize=100&order=desc&sort=activity&tagged=${name}&site=stackoverflow`
+    const query = new URLSearchParams({
+      page: String(page++),
+      pagesize: '100',
+      order: 'asc',
+      sort: 'creation',
+      tagged: name,
+      fromdate: String(fromDate.getTime() / 1000), // jsのDateは経過ミリ秒で扱うため経過秒数に変換する必要がある
+      site: 'stackoverflow',
+    })
+    const fetchQuestionURL = `https://api.stackexchange.com/2.3/questions?${query}`
+    console.log(fetchQuestionURL)
+
     const res: ApiResult = await fetch(fetchQuestionURL).then((r) => r.json())
-    result.push(
-      ...res.items.map((item) => ({
+    console.log(res)
+    // API制限に引っかかると次のレスポンスが返ってくる。 { error_id: 502, error_message: 'too many requests from this IP, more requests available in 84907 seconds', error_name: 'throttle_violation' }
+    if (res.error_name === 'throttle_violation') {
+      console.log(res.error_message)
+      break
+    }
+
+    await prisma.question.createMany({
+      data: res.items.map((item) => ({
         id: item.question_id,
         frameworkId: id,
         // creation_date は unix epoch time(経過秒数)である。cf) https://api.stackexchange.com/docs/dates
@@ -65,12 +100,15 @@ async function fetchAndSaveQuestionDataForSpecificFramework({
         askedAt: new Date(item.creation_date * 1000),
         answerCount: item.answer_count,
       })),
-    )
+      skipDuplicates: true,
+    })
 
+    if (res.quota_remaining <= 0) {
+      console.log('no quota remain')
+      break
+    }
     if (!res.has_more) break
   }
-
-  await prisma.question.createMany({ data: result, skipDuplicates: true })
 }
 
 main()
