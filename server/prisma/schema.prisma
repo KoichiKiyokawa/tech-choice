@@ -34,7 +34,7 @@ model Framework {
   score                 Score?
   similarities          Similarity[]   @relation("SimilarityTarget")
   SimilarityComparisons Similarity[]   @relation("SimilarityComparison")
-  question              Question?
+  questions             Question[]
   @@unique([owner, name])
 }
 
