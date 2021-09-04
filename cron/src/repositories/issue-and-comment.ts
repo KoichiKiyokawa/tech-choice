@@ -1,4 +1,4 @@
-import { PrismaClient } from '.prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { pick } from 'rhodash'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchIssueAndComments } from '../fetcher/fetch-issue-and-comment'

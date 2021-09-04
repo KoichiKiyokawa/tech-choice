@@ -1,4 +1,4 @@
-import { PrismaClient } from '.prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
 import { fetchCollaborators } from '../fetcher/fetch-collaborators'
 
