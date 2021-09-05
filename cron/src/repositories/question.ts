@@ -18,6 +18,8 @@ async function main() {
       id: framework.id,
       name: framework.name,
       fromDate: lastFetchedAt,
+      // FIXME: 一時的なもの
+      toDate: new Date(2021, 9 - 1, 1),
     })
   }
 }
@@ -64,10 +66,12 @@ async function fetchAndSaveQuestionDataForSpecificFramework({
   id,
   name,
   fromDate = dayjs().add(-1, 'year').toDate(),
+  toDate = new Date(),
 }: {
   id: number
   name: string
   fromDate?: Date
+  toDate?: Date
 }): Promise<void> {
   let page = 1
   while (true) {
@@ -78,6 +82,7 @@ async function fetchAndSaveQuestionDataForSpecificFramework({
       sort: 'creation',
       tagged: name,
       fromdate: String((fromDate.getTime() / 1000).toFixed(0)), // jsのDateは経過ミリ秒で扱うため経過秒数に変換する必要がある
+      todate: String((toDate.getTime() / 1000).toFixed(0)),
       site: 'stackoverflow',
     })
     const fetchQuestionURL = `https://api.stackexchange.com/2.3/questions?${query}`
