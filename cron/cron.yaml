@@ -1,0 +1,7 @@
+cron:
+  # - description: 'StackOverflowの質問情報を取得する'
+  #   url: /questions
+  #   # schedule: every day 02:00
+  #   schedule: every 1 minutes
+  #   timezone: Asia/Tokyo
+  #   target: cron

@@ -1,0 +1,3 @@
+service: cron
+runtime: nodejs14
+entrypoint: node dist/handler
