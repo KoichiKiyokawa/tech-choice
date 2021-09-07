@@ -1,8 +1,15 @@
 <script lang="ts">
   import type { FrameworkWithScore } from '@server/framework/framework.type'
   import type { Similarity } from '@server/type'
-  import { DataTable, DataTableSkeleton, MultiSelect, Tag } from 'carbon-components-svelte'
+  import {
+    DataTable,
+    DataTableSkeleton,
+    MultiSelect,
+    Tag,
+    TooltipIcon,
+  } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
+  import Information16 from 'carbon-icons-svelte/lib/Information16'
   import { baseFetch } from '~/utils/fetch'
   import { roundByTheDigits } from '~/utils/math'
 
@@ -25,9 +32,21 @@
 
   const _getSimilarityKey = (framework: FrameworkWithScore) => `${framework.name}_similarity`
   $: evaluations = [
-    { key: 'developmentActivity', value: '開発の活発さ', weight: 0 },
-    { key: 'maintenance', value: 'メンテナンス', weight: 0 },
-    { key: 'popularity', value: '人気度', weight: 0 },
+    {
+      key: 'developmentActivity',
+      value: '開発の活発さ',
+      weight: 0,
+    },
+    {
+      key: 'maintenance',
+      value: 'メンテナンス',
+      weight: 0,
+    },
+    {
+      key: 'popularity',
+      value: '人気度',
+      weight: 0,
+    },
     ...similarityTargets.map((framework) => ({
       key: _getSimilarityKey(framework),
       value: `${framework.name}との類似度`,
@@ -39,6 +58,13 @@
     ...evaluations,
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
+
+  /** ヘッダーに表示する各指標がわかりづらいので、ツールチップを表示する。その説明文 */
+  const keyToTipText: Record<string, string> = {
+    developmentActivity: 'フレームワークの開発がどれだけ活発に行われているか',
+    maintenance: 'フレームワークのメンテナンス(issueへの回答、バグの修正)が行われている度合い',
+    popularity: 'フレームワークのダウンロード数やスター数',
+  }
 
   let loading = true
   let frameworkWithScores: FrameworkWithScore[] = []
@@ -187,6 +213,20 @@
     <DataTableSkeleton rows={rows.length || 5} showHeader={false} showToolbar={false} />
   {:else}
     <DataTable stickyHeader sortable {headers} {rows}>
+      <div slot="cell-header" let:header>
+        {#if keyToTipText[header.key]}
+          <span class="v-center">
+            {header.value}
+            <TooltipIcon
+              tooltipText={keyToTipText[header.key]}
+              icon={Information16}
+              direction="right"
+            />
+          </span>
+        {:else}
+          {header.value}
+        {/if}
+      </div>
       <div slot="cell" let:row let:cell>
         {#if cell.key === 'name'}
           <a href={row.officialURL} target="_blank">{cell.value}</a>
@@ -259,5 +299,20 @@
     display: inline-block;
     width: var(--each-width);
     text-align: center;
+  }
+
+  /* util */
+  .v-center {
+    /* 垂直方向の中心揃え */
+    display: flex;
+    align-items: center;
+  }
+
+  /* override */
+  .container :global(.bx--table-header-label) {
+    overflow: visible;
+  }
+  .container :global(.bx--assistive-text) {
+    overflow: visible;
   }
 </style>
