@@ -16,7 +16,7 @@ export async function baseFetch<Body = Record<string, unknown>, Resp = void>(
       // credentials: 'include', // keep cookies for any domain
     })
   } catch (err) {
-    return { data: null, error: err, status: 500 }
+    return { data: null, error: err as Error, status: 500 }
   }
 
   if (!res.ok) return { data: null, error: new Error(res.statusText), status: res.status }
