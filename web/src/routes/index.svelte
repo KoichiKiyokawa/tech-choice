@@ -217,11 +217,7 @@
         {#if keyToTipText[header.key]}
           <span class="v-center">
             {header.value}
-            <TooltipIcon
-              tooltipText={keyToTipText[header.key]}
-              icon={Information16}
-              direction="right"
-            />
+            <TooltipIcon tooltipText={keyToTipText[header.key]} icon={Information16} />
           </span>
         {:else}
           {header.value}
@@ -309,10 +305,9 @@
   }
 
   /* override */
-  .container :global(.bx--table-header-label) {
-    overflow: visible;
-  }
-  .container :global(.bx--assistive-text) {
+  .container :global(.bx--table-header-label),
+  .container :global(thead) {
+    /* ヘッダーに配置されているツールチップが見切れないように */
     overflow: visible;
   }
 </style>
