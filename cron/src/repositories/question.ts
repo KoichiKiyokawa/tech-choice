@@ -81,8 +81,8 @@ async function fetchAndSaveQuestionDataForSpecificFramework({
       order: 'asc',
       sort: 'creation',
       tagged: name,
-      fromdate: String((fromDate.getTime() / 1000).toFixed(0)), // jsのDateは経過ミリ秒で扱うため経過秒数に変換する必要がある
-      todate: String((toDate.getTime() / 1000).toFixed(0)),
+      fromdate: String(dayjs(fromDate).unix()),
+      todate: String(dayjs(toDate).unix()),
       site: 'stackoverflow',
     })
     const fetchQuestionURL = `https://api.stackexchange.com/2.3/questions?${query}`
