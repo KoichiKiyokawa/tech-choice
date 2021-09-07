@@ -2,7 +2,6 @@
   "name": "cron",
   "license": "MIT",
   "private": true,
-  "type": "module",
   "scripts": {
     "fmt": "prettier --write . --ignore-path .gitignore",
     "codegen": "graphql-codegen --config codegen.yml",
