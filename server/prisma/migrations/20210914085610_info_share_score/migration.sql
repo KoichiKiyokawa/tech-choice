@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Score" ADD COLUMN     "infoShareActivity" DOUBLE PRECISION NOT NULL DEFAULT 0;
