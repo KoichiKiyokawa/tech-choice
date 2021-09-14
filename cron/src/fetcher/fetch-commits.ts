@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { last } from 'rhodash'
 import {
   GetCommitHistory,
@@ -10,8 +11,19 @@ import { withinOneYear } from '../utils/date'
 
 type Commit = { id: string; committedDate: DateISOstring; additions: number; deletions: number }
 
-/** コミットを新しい順に取得していく。一年以上前のコミットが取得された時点で処理を止める */
-export async function fetchCommits({ name, owner }: { name: string; owner: string }) {
+/**
+ * コミットを新しい順に取得していく。一年以上前のコミットが取得された時点で処理を止める
+ * @param lastCommittedAt これよりも新しいコミットのみを取得する
+ **/
+export async function fetchCommits({
+  name,
+  owner,
+  lastCommittedAt,
+}: {
+  name: string
+  owner: string
+  lastCommittedAt?: Date
+}) {
   const commitList: Commit[] = []
   const cursor: { value?: string } = {}
 
@@ -34,7 +46,10 @@ export async function fetchCommits({ name, owner }: { name: string; owner: strin
       const commit = edge?.node
       if (commit == null) continue
 
-      if (withinOneYear(commit.committedDate))
+      if (
+        withinOneYear(commit.committedDate) ||
+        dayjs(commit.committedDate).isBefore(lastCommittedAt, 'hour') // undefinedが渡されたときはfalseになる
+      )
         commitList.push({
           id: commit.id,
           additions: commit.additions,
