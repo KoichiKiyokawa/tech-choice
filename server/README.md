@@ -14,5 +14,5 @@ pg_dump -U postgres -Fc tech-choice > /backup/202107161543
 yarn db up
 yarn db exec db ash
 psql -U postgres -c  'create database "tech-choice";' # db が存在しない場合
-pg_restore -U postgres -d tech-choice /backup/202107161543
+pg_restore -U postgres -d tech-choice -c /backup/202107161543 # -c リストア前にDBをリセットする
 ```
