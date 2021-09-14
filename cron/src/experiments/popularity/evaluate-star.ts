@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
+import { fixedLastCalculatedAt } from '../../constants/date'
 import { FRAMEWORK_WITH_OWNER_LIST } from '../../constants/framework-list'
 import { fetchStarredAtList, StarHistory } from '../../fetcher/fetch-starred-at-list'
 import { calcAgingScore } from '../../utils/date'
@@ -14,7 +15,8 @@ async function main() {
 
   const allFrameworkScores: Decimal[] = allFrameworkResults.map((starHistories) =>
     starHistories.reduce(
-      (acc, history) => acc.plus(calcAgingScore(dayjs().diff(history.starredAt, 'days'))),
+      (acc, history) =>
+        acc.plus(calcAgingScore(dayjs(fixedLastCalculatedAt).diff(history.starredAt, 'days'))),
       new Decimal(0),
     ),
   )

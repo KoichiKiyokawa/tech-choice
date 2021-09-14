@@ -7,6 +7,7 @@ import { saveResultToFile } from '../utils/file'
 import { MarkdownTable } from '../utils/table'
 import { fetchCollaborators } from '../fetcher/fetch-collaborators'
 import { calcAgingScore } from '../utils/date'
+import { fixedLastCalculatedAt } from '../constants/date'
 
 type Scores = {
   issueCloseSpeedScore: Decimal
@@ -47,7 +48,7 @@ async function main() {
         issueCloseSpeedScore = issueCloseSpeedScore.plus(
           new Decimal(1)
             .times(calcAgingScore(dayjs(issue.closedAt).diff(issue.createdAt, 'day')))
-            .times(calcAgingScore(dayjs().diff(issue.closedAt, 'day'))),
+            .times(calcAgingScore(dayjs(fixedLastCalculatedAt).diff(issue.closedAt, 'day'))),
         )
       } else {
         // issue がどれくらい放置されているか
@@ -69,7 +70,7 @@ async function main() {
         if (collaboratorUserNameList.includes(comment.author?.login ?? '')) {
           issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
             new Decimal(comment.body.length).times(
-              calcAgingScore(dayjs().diff(comment.createdAt, 'day')),
+              calcAgingScore(dayjs(fixedLastCalculatedAt).diff(comment.createdAt, 'day')),
             ),
           )
         }

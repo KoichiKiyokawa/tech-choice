@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
+import { fixedLastCalculatedAt } from '../constants/date'
 import { calcAgingScore } from '../utils/date'
 
 export function calcPopularityScoreForSpecificFramework({
@@ -14,12 +15,16 @@ export function calcPopularityScoreForSpecificFramework({
 }): Decimal {
   let result = new Decimal(0)
   for (const { count, downloadedAt } of downloadHistories) {
-    const eachDayScore = new Decimal(count).times(calcAgingScore(dayjs().diff(downloadedAt, 'day')))
+    const eachDayScore = new Decimal(count).times(
+      calcAgingScore(dayjs(fixedLastCalculatedAt).diff(downloadedAt, 'day')),
+    )
     result = result.plus(eachDayScore)
   }
 
   for (const { starredAt } of starHistories) {
-    const eachDayScore = new Decimal(1).times(calcAgingScore(dayjs().diff(starredAt, 'day')))
+    const eachDayScore = new Decimal(1).times(
+      calcAgingScore(dayjs(fixedLastCalculatedAt).diff(starredAt, 'day')),
+    )
     result = result.plus(eachDayScore)
   }
 

@@ -1,6 +1,7 @@
 import { Issue, IssueComment } from '@prisma/client'
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
+import { fixedLastCalculatedAt } from '../constants/date'
 import { calcAgingScore } from '../utils/date'
 
 /**
@@ -34,7 +35,7 @@ export function calcMaintenanceSubScoresForSpecificFramework({
       issueCloseSpeedScore = issueCloseSpeedScore.plus(
         new Decimal(1)
           .times(calcAgingScore(dayjs(issue.closedAt).diff(issue.openedAt, 'day')))
-          .times(calcAgingScore(dayjs().diff(issue.closedAt, 'day'))),
+          .times(calcAgingScore(dayjs(fixedLastCalculatedAt).diff(issue.closedAt, 'day'))),
       )
     } else {
       // issue がどれくらい放置されているか
@@ -54,7 +55,7 @@ export function calcMaintenanceSubScoresForSpecificFramework({
       if (collaboratorUserNameList.includes(comment.author)) {
         issueCommentByCollaboratorScore = issueCommentByCollaboratorScore.plus(
           new Decimal(comment.body.length).times(
-            calcAgingScore(dayjs().diff(comment.postedAt, 'day')),
+            calcAgingScore(dayjs(fixedLastCalculatedAt).diff(comment.postedAt, 'day')),
           ),
         )
       }
