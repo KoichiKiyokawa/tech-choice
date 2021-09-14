@@ -10,6 +10,7 @@ import { withinOneYear } from '../utils/date'
 
 type Commit = { id: string; committedDate: DateISOstring; additions: number; deletions: number }
 
+/** コミットを新しい順に取得していく。一年以上前のコミットが取得された時点で処理を止める */
 export async function fetchCommits({ name, owner }: { name: string; owner: string }) {
   const commitList: Commit[] = []
   const cursor: { value?: string } = {}
