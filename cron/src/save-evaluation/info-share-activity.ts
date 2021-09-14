@@ -10,12 +10,13 @@ const prisma = new PrismaClient()
 async function main() {
   const frameworkList = await prisma.framework.findMany()
   /** 正規化前の値 */
-  const frameworkNameToOriginalScore: Map<string, Decimal> = new Map()
-  await Promise.all(
-    frameworkList.map(async (framework) => {
-      const originalScore = await calEachFrameworkInfoShareActivity(framework)
-      frameworkNameToOriginalScore.set(framework.name, originalScore)
-    }),
+  const frameworkNameToOriginalScore: Map<string, Decimal> = new Map(
+    await Promise.all<[string, Decimal]>(
+      frameworkList.map(async (framework) => {
+        const originalScore = await calEachFrameworkInfoShareActivity(framework)
+        return [framework.name, originalScore]
+      }),
+    ),
   )
 
   await Promise.all(
