@@ -1,20 +1,18 @@
-import { Question, IssueComment, Issue } from '@prisma/client'
+import { IssueComment, Question } from '@prisma/client'
 import dayjs from 'dayjs'
 import { Decimal } from 'decimal.js'
 import { fixedLastCalculatedAt } from '../constants/date'
 import { calcAgingScore } from '../utils/date'
 
-type IssueWithComment = Issue & { issueComments: IssueComment[] }
-
 export function calcInfoShareActivityForSepcificFramework({
   questions,
-  issueWithCommentList,
+  issueComments,
 }: {
   questions: Question[]
-  issueWithCommentList: IssueWithComment[]
+  issueComments: IssueComment[]
 }) {
   const questionScore = calcQuestionScoreForSpecificFramework({ questions })
-  const issueAskScore = calcIssueAskScoreForSpecificFramework({ issueWithCommentList })
+  const issueAskScore = calcIssueAskScoreForSpecificFramework({ issueComments })
 
   return questionScore.plus(issueAskScore)
 }
@@ -39,21 +37,18 @@ function calcQuestionScoreForSpecificFramework({ questions }: { questions: Quest
  * TODO: コラボレータ以外のコメントに絞り込んだほうが良いかもしれない。
  * */
 function calcIssueAskScoreForSpecificFramework({
-  issueWithCommentList: issues,
+  issueComments,
 }: {
-  issueWithCommentList: IssueWithComment[]
+  issueComments: IssueComment[]
 }): Decimal {
   let result = new Decimal(0)
 
   // コメント文字数 x AGING_SCORE
-  for (const issue of issues) {
-    const eachIssueScore = calcAgingScore(dayjs(fixedLastCalculatedAt).diff(issue.openedAt)).times(
-      issue.issueComments.reduce(
-        (total, comment) => total.plus(comment.body.length),
-        new Decimal(0),
-      ),
+  for (const comment of issueComments) {
+    const eachScore = calcAgingScore(dayjs(fixedLastCalculatedAt).diff(comment.postedAt)).times(
+      comment.body.length,
     )
-    result = result.plus(eachIssueScore)
+    result = result.plus(eachScore)
   }
 
   return result
