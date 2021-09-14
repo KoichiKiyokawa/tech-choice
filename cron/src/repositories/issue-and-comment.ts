@@ -30,6 +30,7 @@ async function main() {
 
       await prisma.issue.create({
         data: {
+          id: issue.id,
           closedAt: issue.closedAt ?? undefined,
           openedAt: issue.createdAt,
           framework: { connect: { owner_name: nameWithOwner } },
@@ -38,6 +39,7 @@ async function main() {
               !comment
                 ? []
                 : {
+                    id: comment.id,
                     framework: { connect: { owner_name: nameWithOwner } },
                     postedAt: comment.createdAt,
                     body: comment.body,

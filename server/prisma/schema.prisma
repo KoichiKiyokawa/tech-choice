@@ -50,7 +50,7 @@ model Commit {
 
 // issueを時系列データとして格納
 model Issue {
-  id            Int            @id @default(autoincrement())
+  id            String         @id // GitHub API から返却される id を用いる
   framework     Framework      @relation(fields: [frameworkId], references: [id])
   frameworkId   Int
   openedAt      DateTime // issueがopenされた日時
@@ -60,9 +60,9 @@ model Issue {
 
 // issue についたコメントを格納
 model IssueComment {
-  id          Int       @id @default(autoincrement())
+  id          String    @id // GitHub API から返却される id を用いる
   issue       Issue     @relation(fields: [issueId], references: [id])
-  issueId     Int
+  issueId     String
   framework   Framework @relation(fields: [frameworkId], references: [id])
   frameworkId Int
   postedAt    DateTime // コメントが投稿された日時
