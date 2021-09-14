@@ -107,6 +107,7 @@ model Score {
   maintenance         Float     @default(0) // メンテナンスがされているか
   popularity          Float     @default(0) // 人気
   developmentActivity Float     @default(0) // 開発の活発さ
+  infoShareActivity   Float     @default(0) // 情報共有の活発さ
 }
 
 model Similarity {
