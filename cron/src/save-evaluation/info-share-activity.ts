@@ -2,14 +2,17 @@ import { Framework, PrismaClient } from '@prisma/client'
 import { Decimal } from 'decimal.js'
 import { fixedLastCalculatedAt } from '../constants/date'
 import { calcInfoShareActivityForSepcificFramework } from '../evaluation/question'
-import { normalizeFromList } from '../utils/math'
+import { normalizeFromMap, standardizeFromMap } from '../utils/math'
 
 const prisma = new PrismaClient()
 
-/** 情報共有の活発さを計算する */
+/**
+ * 情報共有の活発さを計算する
+ * reactだけ外れ値なので、標準化を行ってから正規化を行う。
+ */
 async function main() {
   const frameworkList = await prisma.framework.findMany()
-  /** 正規化前の値 */
+  /** 標準化正規化前の値 */
   const frameworkNameToOriginalScore: Map<string, Decimal> = new Map(
     await Promise.all<[string, Decimal]>(
       frameworkList.map(async (framework) => {
@@ -19,11 +22,20 @@ async function main() {
     ),
   )
 
+  /** 標準化を行った値 */
+  const frameworkNameToStandardizedScore: Map<string, Decimal> = new Map(
+    frameworkList.map((framework) => [
+      framework.name,
+      standardizeFromMap({ targetKey: framework.name, map: frameworkNameToOriginalScore }),
+    ]),
+  )
+
   await Promise.all(
     frameworkList.map(async (framework) => {
-      const normalizedScore = normalizeFromList({
-        target: frameworkNameToOriginalScore.get(framework.name)!,
-        list: Array.from(frameworkNameToOriginalScore.values()),
+      /** 標準化を行った後に正規化を行う */
+      const normalizedScore = normalizeFromMap({
+        targetKey: framework.name,
+        map: frameworkNameToStandardizedScore,
       }).toNumber()
       await prisma.framework.update({
         where: { id: framework.id },

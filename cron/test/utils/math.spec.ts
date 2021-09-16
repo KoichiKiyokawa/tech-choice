@@ -3,7 +3,9 @@ import {
   combinationIterator,
   normalize,
   normalizeFromList,
+  normalizeFromMap,
   standardizeFromList,
+  standardizeFromMap,
   sum,
   Vector,
 } from '../../src/utils/math'
@@ -34,8 +36,19 @@ describe('配列から求める正規化', () => {
   })
 })
 
+describe('マップから求める正規化', () => {
+  it('0, 2, 10のマップで2に対して正規化を行うと0.2になる', () => {
+    const map = new Map([
+      ['a', new Decimal(0)],
+      ['b', new Decimal(2)],
+      ['c', new Decimal(10)],
+    ])
+    expect(normalizeFromMap({ targetKey: 'b', map }).toNumber()).toBeCloseTo(0.2)
+  })
+})
+
 describe('配列から求める標準化', () => {
-  it('10, 20, 30の集合で、30に対して標準化を行うと', () => {
+  it('10, 20, 30の集合で、30に対して標準化を行うと1.224744871391589くらいになる', () => {
     expect(
       standardizeFromList({
         target: new Decimal(30),
@@ -51,6 +64,21 @@ describe('配列から求める標準化', () => {
         list: [10, 20, 30].map((n) => new Decimal(n)),
       }).toNumber(),
     ).toEqual(0)
+  })
+})
+
+describe('マップから求める標準化', () => {
+  const map = new Map<'a' | 'b' | 'c', Decimal>([
+    ['a', new Decimal(10)],
+    ['b', new Decimal(20)],
+    ['c', new Decimal(30)],
+  ])
+  it('10, 20, 30の集合で、30に対して標準化を行うと1.224744871391589くらいになる', () => {
+    expect(standardizeFromMap({ targetKey: 'c', map }).toNumber()).toBeCloseTo(1.224744871391589)
+  })
+
+  it('10, 20, 30の集合で、20に対して標準化を行うと0になる', () => {
+    expect(standardizeFromMap({ targetKey: 'b', map }).toNumber()).toEqual(0)
   })
 })
 

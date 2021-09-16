@@ -18,6 +18,17 @@ export const normalizeFromList = ({ target, list }: { target: Decimal; list: Dec
   normalize({ target, min: Decimal.min(...list), max: Decimal.max(...list) })
 
 /**
+ * @param targetKey 正規化をする対象のkey
+ * @param map 母集団となる集合。keyに識別子、valueに値が入っている想定
+ */
+export const normalizeFromMap = <K>({ targetKey, map }: { targetKey: K; map: Map<K, Decimal> }) => {
+  const target = map.get(targetKey)
+  if (target == null) throw Error('[normalizeFromMap] No key in the map')
+
+  return normalizeFromList({ target, list: [...map.values()] })
+}
+
+/**
  * @param target 標準化をする対象
  * @param list targetを含む集合
  * @returns
@@ -30,9 +41,25 @@ export const standardizeFromList = ({ target, list }: { target: Decimal; list: D
     .dividedBy(list.length)
 
   const std = variance.sqrt() // 標準偏差
-  console.log({ variance, mean, std })
   const zScore = target.minus(mean).dividedBy(std)
   return zScore
+}
+
+/**
+ * @param targetKey 標準化をする対象のkey
+ * @param map 母集団となる集合。keyに識別子、valueに値が入っている想定
+ */
+export const standardizeFromMap = <K>({
+  targetKey,
+  map,
+}: {
+  targetKey: K
+  map: Map<K, Decimal>
+}) => {
+  const target = map.get(targetKey)
+  if (target == null) throw Error('[normalizeFromMap] No key in the map')
+
+  return standardizeFromList({ target, list: [...map.values()] })
 }
 
 /**
