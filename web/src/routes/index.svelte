@@ -179,14 +179,44 @@
 
   const presetHandler = {
     beginner() {
-      alert('TODO')
+      _assginWeightInputElement({
+        infoShareActivity: 1,
+        developmentActivity: 0,
+        maintenance: 0.5,
+        popularity: 0.1,
+      })
     },
     stabilityOriented() {
-      alert('TODO')
+      _assginWeightInputElement({
+        infoShareActivity: 0.5,
+        developmentActivity: 0,
+        maintenance: 1,
+        popularity: 0.1,
+      })
     },
     activityOriented() {
-      alert('TODO')
+      _assginWeightInputElement({
+        infoShareActivity: 0.2,
+        developmentActivity: 1,
+        maintenance: 0.8,
+        popularity: 0.1,
+      })
     },
+  }
+
+  function _assginWeightInputElement(
+    preset: {
+      [K in 'infoShareActivity' | 'developmentActivity' | 'maintenance' | 'popularity']: number
+    },
+  ) {
+    // input要素に無理やり代入する
+    for (const [key, value] of Object.entries(preset)) {
+      const elem = document.querySelector<HTMLInputElement>(`input.weight-input[name="${key}"]`)
+      if (elem == null) continue
+
+      elem.value = value.toString()
+      evaluations = evaluations.map((ev) => (ev.key === key ? { ...ev, weight: value } : ev))
+    }
   }
 </script>
 
@@ -240,7 +270,7 @@
   {/if}
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
-    <span class="weight-label">重み</span>
+    <span class="weight-label">重み(0 ~ 1)</span>
     {#each evaluations as evaluation}
       <div class="each-weight-input-wrapper">
         <input
