@@ -33,6 +33,11 @@
   const _getSimilarityKey = (framework: FrameworkWithScore) => `${framework.name}_similarity`
   $: evaluations = [
     {
+      key: 'infoShareActivity',
+      value: '情報共有の活発さ',
+      weight: 0,
+    },
+    {
       key: 'developmentActivity',
       value: '開発の活発さ',
       weight: 0,
@@ -61,6 +66,7 @@
 
   /** ヘッダーに表示する各指標がわかりづらいので、ツールチップを表示する。その説明文 */
   const keyToTipText: Record<string, string> = {
+    infoShareActivity: 'フレームワークに対する質問に対して、どれくらい回答が活発に行われているか',
     developmentActivity: 'フレームワークの開発がどれだけ活発に行われているか',
     maintenance: 'フレームワークのメンテナンス(issueへの回答、バグの修正)が行われている度合い',
     popularity: 'フレームワークのダウンロード数やスター数',
