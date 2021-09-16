@@ -141,7 +141,7 @@
         (typeof thisEvaluationValue === 'number' ? thisEvaluationValue : 0) * evaluation.weight
       )
     }, 0)
-    return { ...row, weightedScore }
+    return { ...row, weightedScore: roundByTheDigits(weightedScore, settings.digits) }
   })
 
   /** 重みのバリデーションを行い、有効であれば反映する */
