@@ -3,6 +3,7 @@ import { Decimal } from 'decimal.js'
 import { calcMaturityForSpecificFramework } from '../evaluation/maturity'
 import { fetchVersionHistory } from '../fetcher/fetch-version-history'
 import { DateISOstring } from '../types/date'
+import { normalizeFromMap } from '../utils/math'
 
 const prisma = new PrismaClient()
 
@@ -21,7 +22,21 @@ async function main() {
     ),
   )
 
-  console.log(nameToMaturityMap)
+  await Promise.all(
+    frameworkList.map(async (framework) => {
+      const maturity = normalizeFromMap({
+        targetKey: framework.name,
+        map: nameToMaturityMap,
+      }).toNumber()
+
+      await prisma.framework.update({
+        where: { id: framework.id },
+        data: {
+          score: { upsert: { create: { maturity }, update: { maturity } } },
+        },
+      })
+    }),
+  )
 }
 
 main()
