@@ -3,6 +3,7 @@ import {
   combinationIterator,
   normalize,
   normalizeFromList,
+  standardizeFromList,
   sum,
   Vector,
 } from '../../src/utils/math'
@@ -30,6 +31,26 @@ describe('配列から求める正規化', () => {
     expect(() => {
       normalizeFromList({ target: new Decimal(0), list: [] })
     }).toThrow('Invalid argument: undefined')
+  })
+})
+
+describe('配列から求める標準化', () => {
+  it('10, 20, 30の集合で、30に対して標準化を行うと', () => {
+    expect(
+      standardizeFromList({
+        target: new Decimal(30),
+        list: [10, 20, 30].map((n) => new Decimal(n)),
+      }).toNumber(),
+    ).toBeCloseTo(1.224744871391589)
+  })
+
+  it('10, 20, 30の集合で、20に対して標準化を行うと0になる', () => {
+    expect(
+      standardizeFromList({
+        target: new Decimal(20),
+        list: [10, 20, 30].map((n) => new Decimal(n)),
+      }).toNumber(),
+    ).toEqual(0)
   })
 })
 

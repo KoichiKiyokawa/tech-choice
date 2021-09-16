@@ -18,6 +18,24 @@ export const normalizeFromList = ({ target, list }: { target: Decimal; list: Dec
   normalize({ target, min: Decimal.min(...list), max: Decimal.max(...list) })
 
 /**
+ * @param target 標準化をする対象
+ * @param list targetを含む集合
+ * @returns
+ */
+export const standardizeFromList = ({ target, list }: { target: Decimal; list: Decimal[] }) => {
+  const mean = sum(list).dividedBy(list.length) // 平均
+  /** 分散 */
+  const variance = list
+    .reduce((sum, elem) => sum.plus(elem.minus(mean).pow(2)), new Decimal(0))
+    .dividedBy(list.length)
+
+  const std = variance.sqrt() // 標準偏差
+  console.log({ variance, mean, std })
+  const zScore = target.minus(mean).dividedBy(std)
+  return zScore
+}
+
+/**
  * @param nums Decimal型の数値一覧
  * @returns
  */
