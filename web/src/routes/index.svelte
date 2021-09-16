@@ -151,7 +151,7 @@
       document.querySelectorAll<HTMLInputElement>('.weight-input'),
     )
     if (!_validateWeights(weightInputElems.map((elem) => elem.valueAsNumber))) {
-      e.currentTarget.setCustomValidity('invalid weight')
+      e.currentTarget.setCustomValidity('重みは0~1の値を入力してください')
       e.currentTarget.reportValidity()
       return
     }
