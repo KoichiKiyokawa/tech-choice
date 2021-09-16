@@ -1,40 +1,42 @@
 import { PrismaClient } from '@prisma/client'
 import { Decimal } from 'decimal.js'
-import { Frameworks, FRAMEWORK_WITH_OWNER_LIST } from '../constants/framework-list'
+import { Frameworks } from '../constants/framework-list'
 import { calcPopularityScoreForSpecificFramework } from '../evaluation/popularity'
-import { normalizeFromList } from '../utils/math'
+import { normalizeFromMap } from '../utils/math'
 
 const prisma = new PrismaClient()
 async function main() {
-  const nameWithScoreMap = new Map<Frameworks, Decimal>()
-  for (const frameworkWithOwner of FRAMEWORK_WITH_OWNER_LIST) {
-    const [downloadHistories, starHistories] = await Promise.all([
-      prisma.download.findMany({ where: { framework: { name: frameworkWithOwner.name } } }),
-      prisma.star.findMany({ where: { framework: { name: frameworkWithOwner.name } } }),
-    ])
+  const frameworkList = await prisma.framework.findMany()
+  const nameWithOriginalScoreMap = new Map<Frameworks, Decimal>(
+    await Promise.all<[Frameworks, Decimal]>(
+      frameworkList.map(async (framework) => {
+        const [downloadHistories, starHistories] = await Promise.all([
+          prisma.download.findMany({ where: { framework: { name: framework.name } } }),
+          prisma.star.findMany({ where: { framework: { name: framework.name } } }),
+        ])
+        const thisFrameworkScore = calcPopularityScoreForSpecificFramework({
+          downloadHistories,
+          starHistories,
+        })
+        return [framework.name as Frameworks, thisFrameworkScore]
+      }),
+    ),
+  )
 
-    nameWithScoreMap.set(
-      frameworkWithOwner.name,
-      calcPopularityScoreForSpecificFramework({ downloadHistories, starHistories }),
-    )
-  }
+  // 正規化
+  await Promise.all(
+    frameworkList.map(async (framework) => {
+      const popularity = normalizeFromMap({
+        targetKey: framework.name,
+        map: nameWithOriginalScoreMap,
+      }).toNumber()
 
-  // normalize
-  for (const frameworkWithOwner of FRAMEWORK_WITH_OWNER_LIST) {
-    const thisFrameworkScore = nameWithScoreMap.get(frameworkWithOwner.name)
-    if (thisFrameworkScore == null) continue
-
-    const normalizedScore = normalizeFromList({
-      target: thisFrameworkScore,
-      list: Array.from(nameWithScoreMap.values()),
-    })
-
-    const operation = { popularity: normalizedScore.toNumber() }
-    await prisma.framework.update({
-      where: { owner_name: { name: frameworkWithOwner.name, owner: frameworkWithOwner.owner } },
-      data: { score: { upsert: { create: operation, update: operation } } },
-    })
-  }
+      await prisma.framework.update({
+        where: { id: framework.id },
+        data: { score: { upsert: { create: { popularity }, update: { popularity } } } },
+      })
+    }),
+  )
 }
 
 main()
