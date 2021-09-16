@@ -32,7 +32,7 @@ export const FRAMEWORK_WITH_OWNER_LIST: {
   { name: 'hyperapp', owner: 'jorgebucaran' },
   { name: 'imba', owner: 'imba' },
   { name: 'neo', owner: 'neomjs' },
-  { name: 'owl', owner: 'odoo' },
+  { name: 'owl', owner: 'odoo', npmName: '@odoo/owl' },
   { name: 'san', owner: 'baidu' },
   { name: 'solid', owner: 'solidjs', npmName: 'solid-js' },
   { name: 'angular', owner: 'angular' },
@@ -40,5 +40,5 @@ export const FRAMEWORK_WITH_OWNER_LIST: {
   { name: 'dojo', repoName: 'framework', npmName: '@dojo/framework', owner: 'yysun' },
   { name: 'preact', owner: 'preactjs' },
   { name: 'riot', owner: 'riot' },
-  { name: 'stencil', owner: 'ionic-team' },
+  { name: 'stencil', owner: 'ionic-team', npmName: '@stencil/core' },
 ]
