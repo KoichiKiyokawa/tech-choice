@@ -276,7 +276,13 @@
   {/if}
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
-    <span class="weight-label">重み(0 ~ 1)</span>
+    <span class="weight-label">
+      重み(0 ~ 1)
+      <TooltipIcon
+        tooltipText="各指標をどれだけ重要視するか入力してください"
+        icon={Information16}
+      />
+    </span>
     {#each evaluations as evaluation}
       <div class="each-weight-input-wrapper">
         <input
@@ -334,9 +340,11 @@
     width: 100%;
   }
   .weight-label {
-    display: inline-block;
+    display: inline-flex;
     width: var(--each-width);
     text-align: center;
+    justify-content: center;
+    align-items: center;
   }
 
   /* util */
