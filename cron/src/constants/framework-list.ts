@@ -35,7 +35,7 @@ export const FRAMEWORK_WITH_OWNER_LIST: {
   { name: 'owl', owner: 'odoo', npmName: '@odoo/owl' },
   { name: 'san', owner: 'baidu' },
   { name: 'solid', owner: 'solidjs', npmName: 'solid-js' },
-  { name: 'angular', owner: 'angular' },
+  { name: 'angular', owner: 'angular', npmName: '@angular/core' },
   { name: 'apprun', owner: 'yysun' },
   { name: 'dojo', repoName: 'framework', npmName: '@dojo/framework', owner: 'yysun' },
   { name: 'preact', owner: 'preactjs' },
