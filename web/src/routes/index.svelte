@@ -52,6 +52,11 @@
       value: '人気度',
       weight: 0,
     },
+    {
+      key: 'maturity',
+      value: '成熟度',
+      weight: 0,
+    },
     ...similarityTargets.map((framework) => ({
       key: _getSimilarityKey(framework),
       value: `${framework.name}との類似度`,
@@ -70,6 +75,7 @@
     developmentActivity: 'フレームワークの開発がどれだけ活発に行われているか',
     maintenance: 'フレームワークのメンテナンス(issueへの回答、バグの修正)が行われている度合い',
     popularity: 'フレームワークのダウンロード数やスター数',
+    maturity: 'フレームワークがどれくらい成熟・枯れているか',
   }
 
   let loading = true
