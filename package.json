@@ -12,7 +12,7 @@
   "devDependencies": {
     "husky": "^7.0.1",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.4.1"
   },
   "volta": {
     "node": "14.17.4",
