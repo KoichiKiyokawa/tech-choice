@@ -52,6 +52,11 @@
       value: '人気度',
       weight: 0,
     },
+    {
+      key: 'maturity',
+      value: '成熟度',
+      weight: 0,
+    },
     ...similarityTargets.map((framework) => ({
       key: _getSimilarityKey(framework),
       value: `${framework.name}との類似度`,
@@ -70,6 +75,7 @@
     developmentActivity: 'フレームワークの開発がどれだけ活発に行われているか',
     maintenance: 'フレームワークのメンテナンス(issueへの回答、バグの修正)が行われている度合い',
     popularity: 'フレームワークのダウンロード数やスター数',
+    maturity: 'フレームワークがどれくらい成熟・枯れているか',
   }
 
   let loading = true
@@ -270,7 +276,13 @@
   {/if}
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
-    <span class="weight-label">重み(0 ~ 1)</span>
+    <span class="weight-label">
+      重み(0 ~ 1)
+      <TooltipIcon
+        tooltipText="各指標をどれだけ重要視するか入力してください"
+        icon={Information16}
+      />
+    </span>
     {#each evaluations as evaluation}
       <div class="each-weight-input-wrapper">
         <input
@@ -328,9 +340,11 @@
     width: 100%;
   }
   .weight-label {
-    display: inline-block;
+    display: inline-flex;
     width: var(--each-width);
     text-align: center;
+    justify-content: center;
+    align-items: center;
   }
 
   /* util */

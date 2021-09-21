@@ -25,8 +25,8 @@ export async function fetchDownloadsV2({ name }: { name: string }): Promise<Down
   const oneYearAgoDiffDays = today.diff(oneYearAgo, 'days') // 一年前の日付が何日前かを取得 365 or 366
 
   const result: Download[] = []
-  // 10日ごとに並行リクエストを送る
-  for (const dayAgoList of chunk(toRange(0, oneYearAgoDiffDays), 10)) {
+  // 100日ごとに並行リクエストを送る
+  for (const dayAgoList of chunk(toRange(0, oneYearAgoDiffDays), 100)) {
     const thisChunkResult = await Promise.all(
       dayAgoList.map((dayAgo) => fetchSpecificDayAgo({ name, dayAgo })),
     )
