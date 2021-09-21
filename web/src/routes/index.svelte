@@ -30,7 +30,13 @@
     })
   }
 
-  const _getSimilarityKey = (framework: FrameworkWithScore) => `${framework.name}_similarity`
+  /**
+   * フレームワークから一意となるキーを生成する
+   * keyにドットが混じっていると想定外の動作をするので、ドットは削除する
+   * 例えば、 key: 'a.b'のとき、a: {b: <value> }を見に行ってしまう。
+   **/
+  const _getSimilarityKey = (framework: FrameworkWithScore) =>
+    `${framework.name.replace(/\./g, '')}_similarity`
   $: evaluations = [
     {
       key: 'infoShareActivity',
