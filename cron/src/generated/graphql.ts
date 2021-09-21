@@ -20437,22 +20437,23 @@ export type GetCollaboratorsQueryVariables = Exact<{
   after?: Maybe<Scalars['String']>
 }>
 
-export type GetCollaboratorsQuery = { __typename?: 'Query' } & {
-  organization?: Maybe<
-    { __typename?: 'Organization' } & {
-      membersWithRole: { __typename?: 'OrganizationMemberConnection' } & {
-        edges?: Maybe<
-          Array<
-            Maybe<
-              { __typename?: 'OrganizationMemberEdge' } & Pick<OrganizationMemberEdge, 'cursor'> & {
-                  node?: Maybe<{ __typename?: 'User' } & Pick<User, 'id' | 'login'>>
-                }
-            >
-          >
+export type GetCollaboratorsQuery = {
+  __typename?: 'Query'
+  organization?: Maybe<{
+    __typename?: 'Organization'
+    membersWithRole: {
+      __typename?: 'OrganizationMemberConnection'
+      edges?: Maybe<
+        Array<
+          Maybe<{
+            __typename?: 'OrganizationMemberEdge'
+            cursor: string
+            node?: Maybe<{ __typename?: 'User'; id: string; login: string }>
+          }>
         >
-      }
+      >
     }
-  >
+  }>
 }
 
 export type GetCommitHistoryQueryVariables = Exact<{
@@ -20461,38 +20462,41 @@ export type GetCommitHistoryQueryVariables = Exact<{
   after?: Maybe<Scalars['String']>
 }>
 
-export type GetCommitHistoryQuery = { __typename?: 'Query' } & {
-  repository?: Maybe<
-    { __typename?: 'Repository' } & {
-      defaultBranchRef?: Maybe<
-        { __typename?: 'Ref' } & Pick<Ref, 'id'> & {
-            target?: Maybe<
-              | { __typename?: 'Blob' }
-              | ({ __typename?: 'Commit' } & {
-                  history: { __typename?: 'CommitHistoryConnection' } & {
-                    edges?: Maybe<
-                      Array<
-                        Maybe<
-                          { __typename?: 'CommitEdge' } & Pick<CommitEdge, 'cursor'> & {
-                              node?: Maybe<
-                                { __typename?: 'Commit' } & Pick<
-                                  Commit,
-                                  'id' | 'committedDate' | 'additions' | 'deletions'
-                                >
-                              >
-                            }
-                        >
-                      >
-                    >
-                  }
-                })
-              | { __typename?: 'Tag' }
-              | { __typename?: 'Tree' }
-            >
+export type GetCommitHistoryQuery = {
+  __typename?: 'Query'
+  repository?: Maybe<{
+    __typename?: 'Repository'
+    defaultBranchRef?: Maybe<{
+      __typename?: 'Ref'
+      id: string
+      target?: Maybe<
+        | { __typename?: 'Blob' }
+        | {
+            __typename?: 'Commit'
+            history: {
+              __typename?: 'CommitHistoryConnection'
+              edges?: Maybe<
+                Array<
+                  Maybe<{
+                    __typename?: 'CommitEdge'
+                    cursor: string
+                    node?: Maybe<{
+                      __typename?: 'Commit'
+                      id: string
+                      committedDate: any
+                      additions: number
+                      deletions: number
+                    }>
+                  }>
+                >
+              >
+            }
           }
+        | { __typename?: 'Tag' }
+        | { __typename?: 'Tree' }
       >
-    }
-  >
+    }>
+  }>
 }
 
 export type GetIssueAndCommentsQueryVariables = Exact<{
@@ -20501,54 +20505,51 @@ export type GetIssueAndCommentsQueryVariables = Exact<{
   after?: Maybe<Scalars['String']>
 }>
 
-export type GetIssueAndCommentsQuery = { __typename?: 'Query' } & {
-  repository?: Maybe<
-    { __typename?: 'Repository' } & {
-      issues: { __typename?: 'IssueConnection' } & Pick<IssueConnection, 'totalCount'> & {
-          edges?: Maybe<
-            Array<
-              Maybe<
-                { __typename?: 'IssueEdge' } & Pick<IssueEdge, 'cursor'> & {
-                    node?: Maybe<
-                      { __typename?: 'Issue' } & Pick<
-                        Issue,
-                        'id' | 'body' | 'closedAt' | 'createdAt' | 'state'
-                      > & {
-                          comments: { __typename?: 'IssueCommentConnection' } & {
-                            nodes?: Maybe<
-                              Array<
-                                Maybe<
-                                  { __typename?: 'IssueComment' } & Pick<
-                                    IssueComment,
-                                    'id' | 'body' | 'createdAt'
-                                  > & {
-                                      author?: Maybe<
-                                        | ({ __typename?: 'Bot' } & Pick<Bot, 'login'>)
-                                        | ({ __typename?: 'EnterpriseUserAccount' } & Pick<
-                                            EnterpriseUserAccount,
-                                            'login'
-                                          >)
-                                        | ({ __typename?: 'Mannequin' } & Pick<Mannequin, 'login'>)
-                                        | ({ __typename?: 'Organization' } & Pick<
-                                            Organization,
-                                            'login'
-                                          >)
-                                        | ({ __typename?: 'User' } & Pick<User, 'login'>)
-                                      >
-                                    }
-                                >
-                              >
-                            >
-                          }
-                        }
-                    >
-                  }
-              >
-            >
-          >
-        }
+export type GetIssueAndCommentsQuery = {
+  __typename?: 'Query'
+  repository?: Maybe<{
+    __typename?: 'Repository'
+    issues: {
+      __typename?: 'IssueConnection'
+      totalCount: number
+      edges?: Maybe<
+        Array<
+          Maybe<{
+            __typename?: 'IssueEdge'
+            cursor: string
+            node?: Maybe<{
+              __typename?: 'Issue'
+              id: string
+              body: string
+              closedAt?: Maybe<any>
+              createdAt: any
+              state: IssueState
+              comments: {
+                __typename?: 'IssueCommentConnection'
+                nodes?: Maybe<
+                  Array<
+                    Maybe<{
+                      __typename?: 'IssueComment'
+                      id: string
+                      body: string
+                      createdAt: any
+                      author?: Maybe<
+                        | { __typename?: 'Bot'; login: string }
+                        | { __typename?: 'EnterpriseUserAccount'; login: string }
+                        | { __typename?: 'Mannequin'; login: string }
+                        | { __typename?: 'Organization'; login: string }
+                        | { __typename?: 'User'; login: string }
+                      >
+                    }>
+                  >
+                >
+              }
+            }>
+          }>
+        >
+      >
     }
-  >
+  }>
 }
 
 export type GetStargazerQueryVariables = Exact<{
@@ -20557,18 +20558,15 @@ export type GetStargazerQueryVariables = Exact<{
   after?: Maybe<Scalars['String']>
 }>
 
-export type GetStargazerQuery = { __typename?: 'Query' } & {
-  repository?: Maybe<
-    { __typename?: 'Repository' } & {
-      stargazers: { __typename?: 'StargazerConnection' } & {
-        edges?: Maybe<
-          Array<
-            Maybe<{ __typename?: 'StargazerEdge' } & Pick<StargazerEdge, 'cursor' | 'starredAt'>>
-          >
-        >
-      }
+export type GetStargazerQuery = {
+  __typename?: 'Query'
+  repository?: Maybe<{
+    __typename?: 'Repository'
+    stargazers: {
+      __typename?: 'StargazerConnection'
+      edges?: Maybe<Array<Maybe<{ __typename?: 'StargazerEdge'; cursor: string; starredAt: any }>>>
     }
-  >
+  }>
 }
 
 export const GetCollaborators = gql`
