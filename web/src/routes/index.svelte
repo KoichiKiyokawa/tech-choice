@@ -257,13 +257,6 @@
     <Tag>{similarityTarget.name}</Tag>
   {/each}
 
-  <h2>プリセット</h2>
-  <ul class="preset-wrapper">
-    <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
-    <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
-    <li><button on:click={presetHandler.developmentActivityOriented}>開発の活発さ重視</button></li>
-  </ul>
-
   <h2>結果</h2>
   {#if loading}
     <DataTableSkeleton rows={rows.length || 5} showHeader={false} showToolbar={false} />
@@ -309,6 +302,13 @@
       </div>
     {/each}
   </div>
+
+  <h2>プリセット</h2>
+  <ul class="preset-wrapper">
+    <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
+    <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
+    <li><button on:click={presetHandler.developmentActivityOriented}>開発の活発さ重視</button></li>
+  </ul>
 
   <h2>設定</h2>
   <label>
