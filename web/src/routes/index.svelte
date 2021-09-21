@@ -285,7 +285,7 @@
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
     <span class="weight-label">
-      重み(0 ~ 1)
+      重み(それぞれ0 ~ 1)
       <TooltipIcon
         tooltipText="各指標をどれだけ重要視するか入力してください"
         icon={Information16}
