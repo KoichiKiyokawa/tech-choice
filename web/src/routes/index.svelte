@@ -190,29 +190,37 @@
         developmentActivity: 0,
         maintenance: 0.5,
         popularity: 0.1,
+        maturity: 0.2,
       })
     },
     stabilityOriented() {
       _assginWeightInputElement({
         infoShareActivity: 0.5,
         developmentActivity: 0,
-        maintenance: 1,
+        maintenance: 0.8,
         popularity: 0.1,
+        maturity: 1,
       })
     },
-    activityOriented() {
+    developmentActivityOriented() {
       _assginWeightInputElement({
         infoShareActivity: 0.2,
         developmentActivity: 1,
         maintenance: 0.8,
         popularity: 0.1,
+        maturity: 0.1,
       })
     },
   }
 
   function _assginWeightInputElement(
     preset: {
-      [K in 'infoShareActivity' | 'developmentActivity' | 'maintenance' | 'popularity']: number
+      [K in
+        | 'infoShareActivity'
+        | 'developmentActivity'
+        | 'maintenance'
+        | 'popularity'
+        | 'maturity']: number
     },
   ) {
     // input要素に無理やり代入する
@@ -247,7 +255,7 @@
   <ul class="preset-wrapper">
     <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
     <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
-    <li><button on:click={presetHandler.activityOriented}>開発の活発さ重視</button></li>
+    <li><button on:click={presetHandler.developmentActivityOriented}>開発の活発さ重視</button></li>
   </ul>
 
   <h2>結果</h2>
