@@ -1,4 +1,6 @@
+import dayjs from 'dayjs'
 import fetch from 'node-fetch'
+import { fixedLastCalculatedAt } from '../constants/date'
 import { DateISOstring } from '../types/date'
 
 const packageMetadataEndpoint = 'https://registry.npmjs.org'
@@ -22,8 +24,11 @@ export async function fetchVersionHistory(npmPackageName: string): Promise<DateI
   // も含まれてしまっているので除外する
   return Object.entries(res.time)
     .filter(
-      ([version]) =>
-        version !== 'created' && version !== 'modified' && !isExperimentalVersion(version),
+      ([version, date]) =>
+        version !== 'created' &&
+        version !== 'modified' &&
+        !isExperimentalVersion(version) &&
+        isInDateScope(date),
     )
     .map(([, date]) => date)
 }
@@ -41,4 +46,9 @@ function isExperimentalVersion(version: string): boolean {
   // if (version.startsWith('0')) return true
 
   return false
+}
+
+/** 研究対象となる期間に入っているか */
+function isInDateScope(date: DateISOstring) {
+  return dayjs(date).isBefore(fixedLastCalculatedAt)
 }
