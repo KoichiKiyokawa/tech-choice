@@ -11,7 +11,8 @@ type PackageMetadataResponse = {
 }
 
 /**
- * これまでに公開されたバージョンの公開日時を返す。ただし、beta版などの実験的バージョンは含まない
+ * これまでに公開されたバージョンの公開日時を返す。ただし、beta版などの実験的バージョンは含まない。
+ * また対象期間に入っているもののみを返却する。@see isInDateScope
  * @param {string} npmPackageName npmでのパッケージ名
  * @returns 該当パッケージのダウンロード数
  */
