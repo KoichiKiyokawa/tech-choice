@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import fetch from 'node-fetch'
 import { chunk, delay, toRange } from 'rhodash'
+import { fixedLastCalculatedAt } from '../constants/date'
 import { DateISOstring } from '../types/date'
 
 /**
@@ -20,7 +21,7 @@ type Download = {
  * @returns 新しい順にダウンロード数を格納した配列
  */
 export async function fetchDownloadsV2({ name }: { name: string }): Promise<Download[]> {
-  const today = dayjs()
+  const today = dayjs(fixedLastCalculatedAt)
   const oneYearAgo = today.subtract(1, 'year')
   const oneYearAgoDiffDays = today.diff(oneYearAgo, 'days') // 一年前の日付が何日前かを取得 365 or 366
 
