@@ -78,10 +78,10 @@
   /** ヘッダーに表示する各指標がわかりづらいので、ツールチップを表示する。その説明文 */
   const keyToTipText: Record<string, string> = {
     infoShareActivity: 'フレームワークに対する質問に対して、どれくらい回答が活発に行われているか',
-    developmentActivity: 'フレームワークの開発がどれだけ活発に行われているか',
-    maintenance: 'フレームワークのメンテナンス(issueへの回答、バグの修正)が行われている度合い',
-    popularity: 'フレームワークのダウンロード数やスター数',
-    maturity: 'フレームワークがどれくらい成熟・枯れているか',
+    developmentActivity: 'コミットがどれだけ活発に行われているか',
+    maintenance: 'メンテナンス(issueへの回答、バグの修正)が行われている度合い',
+    popularity: 'ダウンロード数やスター数から算出した人気',
+    maturity: '破壊的変更が起きる確率の低さ',
   }
 
   let loading = true
