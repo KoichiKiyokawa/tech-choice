@@ -9,7 +9,7 @@
     TooltipIcon,
   } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
-  import { Information16 } from 'carbon-icons-svelte'
+  import Information16 from 'carbon-icons-svelte/lib/Information16'
   import { baseFetch } from '~/utils/fetch'
   import { roundByTheDigits } from '~/utils/math'
 
@@ -293,7 +293,7 @@
         <div style="display: flex;">
           <span style="display: inline-block; width: 2rem;">例1)</span>
           <span style="display: inline-block; flex: 1">
-            すでに習得済みのフレームワークを選択することで、学習コストの低いフレームワークを探すことができます。
+            すでに習得済みのフレームワークを選択することで、追加の学習コストが低いフレームワークを探すことができます。
           </span>
         </div>
         <div style="display: flex;">
