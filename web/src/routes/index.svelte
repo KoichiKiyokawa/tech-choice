@@ -9,7 +9,7 @@
     TooltipIcon,
   } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
-  import Information16 from 'carbon-icons-svelte/lib/Information16'
+  import { Information16 } from 'carbon-icons-svelte'
   import { baseFetch } from '~/utils/fetch'
   import { roundByTheDigits } from '~/utils/math'
 
@@ -241,23 +241,6 @@
 </script>
 
 <div class="container">
-  <h2>類似度の比較を行うフレームワーク</h2>
-  <MultiSelect
-    spellcheck="false"
-    filterable
-    placeholder="フレームワークを検索..."
-    bind:selectedIds={similarityTargetIds}
-    on:select={onSelectSimilarityTarget}
-    items={frameworkWithScores.map((framework) => ({
-      id: String(framework.id),
-      text: framework.name,
-    }))}
-  />
-  {#each similarityTargets as similarityTarget}
-    <Tag>{similarityTarget.name}</Tag>
-  {/each}
-
-  <h2>結果</h2>
   {#if loading}
     <DataTableSkeleton rows={rows.length || 5} showHeader={false} showToolbar={false} />
   {:else}
@@ -303,6 +286,40 @@
     {/each}
   </div>
 
+  <h2>
+    類似度の比較を行うフレームワーク
+    <TooltipIcon icon={Information16}>
+      <div slot="tooltipText" style="display: block;">
+        <div style="display: flex;">
+          <span style="display: inline-block; width: 2rem;">例1)</span>
+          <span style="display: inline-block; flex: 1">
+            すでに習得済みのフレームワークを選択することで、学習コストの低いフレームワークを探すことができます。
+          </span>
+        </div>
+        <div style="display: flex;">
+          <span style="display: inline-block; width: 2rem;">例2)</span>
+          <span style="display: inline-block; flex: 1">
+            すでに導入済みのフレームワークを選択することで、移行コストの低いフレームワークを探すことができます。
+          </span>
+        </div>
+      </div>
+    </TooltipIcon>
+  </h2>
+  <MultiSelect
+    spellcheck="false"
+    filterable
+    placeholder="フレームワークを検索..."
+    bind:selectedIds={similarityTargetIds}
+    on:select={onSelectSimilarityTarget}
+    items={frameworkWithScores.map((framework) => ({
+      id: String(framework.id),
+      text: framework.name,
+    }))}
+  />
+  {#each similarityTargets as similarityTarget}
+    <Tag>{similarityTarget.name}</Tag>
+  {/each}
+
   <h2>プリセット</h2>
   <ul class="preset-wrapper">
     <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
@@ -321,7 +338,7 @@
   .container {
     max-width: 1200px;
     margin: auto;
-    padding-top: 2rem;
+    padding-top: 4rem;
   }
   h2 {
     margin-top: 2rem;
