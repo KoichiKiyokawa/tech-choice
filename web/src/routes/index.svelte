@@ -320,7 +320,7 @@
     <Tag>{similarityTarget.name}</Tag>
   {/each}
 
-  <h2>プリセット</h2>
+  <h2>重みのプリセット</h2>
   <ul class="preset-wrapper">
     <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
     <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
