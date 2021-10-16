@@ -251,6 +251,7 @@
     類似度の比較を行うフレームワーク
     <TooltipIcon icon={Information16}>
       <div slot="tooltipText" style="display: block;">
+        <p>APIの類似度を比較します</p>
         <div style="display: flex;">
           <span style="display: inline-block; width: 2rem;">例1)</span>
           <span style="display: inline-block; flex: 1">
