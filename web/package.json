@@ -14,12 +14,11 @@
     "deploy": "yarn build && firebase deploy --only hosting"
   },
   "devDependencies": {
-    "@fullhuman/postcss-purgecss": "^4.0.3",
-    "@sveltejs/adapter-static": "^1.0.0-next.16",
-    "@sveltejs/kit": "1.0.0-next.142",
+    "@sveltejs/adapter-static": "^1.0.0-next.21",
+    "@sveltejs/kit": "^1.0.0-next.184",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
-    "carbon-components-svelte": "^0.42.2",
+    "carbon-components-svelte": "^0.45.1",
     "carbon-icons-svelte": "^10.36.0",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
@@ -28,9 +27,9 @@
     "postcss-load-config": "^3.1.0",
     "prettier": "~2.3.2",
     "prettier-plugin-svelte": "^2.3.1",
-    "svelte": "^3.38.3",
+    "svelte": "^3.43.2",
     "svelte-check": "^2.2.2",
-    "svelte-preprocess": "^4.7.4",
+    "svelte-preprocess": "^4.9.8",
     "tslib": "^2.3.0",
     "typescript": "^4.4.3"
   },

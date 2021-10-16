@@ -10,6 +10,11 @@
   } from 'carbon-components-svelte'
   import 'carbon-components-svelte/css/g10.css'
   import Information16 from 'carbon-icons-svelte/lib/Information16'
+  import {
+    EvaluationKey,
+    EVALUATION_TEXTS,
+    getSimilarityKeyByFrameworkName,
+  } from '~/domains/evaluation'
   import { baseFetch } from '~/utils/fetch'
   import { roundByTheDigits } from '~/utils/math'
 
@@ -30,59 +35,34 @@
     })
   }
 
-  /**
-   * フレームワークから一意となるキーを生成する
-   * keyにドットが混じっていると想定外の動作をするので、ドットは削除する
-   * 例えば、 key: 'a.b'のとき、a: {b: <value> }を見に行ってしまう。
-   **/
-  const _getSimilarityKey = (framework: FrameworkWithScore) =>
-    `${framework.name.replace(/\./g, '')}_similarity`
-  $: evaluations = [
-    {
-      key: 'infoShareActivity',
-      value: '情報共有の活発さ',
-      weight: 0,
-    },
-    {
-      key: 'developmentActivity',
-      value: '開発の活発さ',
-      weight: 0,
-    },
-    {
-      key: 'maintenance',
-      value: 'メンテナンス',
-      weight: 0,
-    },
-    {
-      key: 'popularity',
-      value: '人気度',
-      weight: 0,
-    },
-    {
-      key: 'maturity',
-      value: '成熟度',
-      weight: 0,
-    },
-    ...similarityTargets.map((framework) => ({
-      key: _getSimilarityKey(framework),
-      value: `${framework.name}との類似度`,
-      weight: 0,
-    })),
-  ]
+  /** 現在適用中の重みを保存する */
+  let evaluations: { [K in EvaluationKey]?: number } = {
+    infoShareActivity: 0,
+    developmentActivity: 0,
+    maintenance: 0,
+    maturity: 0,
+    popularity: 0,
+  }
+
+  /** 入力中の重みを保持する */
+  let weightForm: typeof evaluations = {}
+
+  /** 表のヘッダー */
+  let headers: { key: 'name' | EvaluationKey | 'weightedScore'; value: string }[]
   $: headers = [
     { key: 'name', value: 'フレームワーク' },
-    ...evaluations,
+    // デフォルトで表示する指標たち
+    ...Object.entries(EVALUATION_TEXTS).map(([key, info]) => ({
+      key: key as EvaluationKey,
+      value: info.text,
+    })),
+    // 類似度に関する指標たち
+    ...similarityTargets.map((target) => ({
+      key: getSimilarityKeyByFrameworkName(target.name),
+      value: `${target.name}との類似度`,
+    })),
     { key: 'weightedScore', value: '重み付けスコア' },
   ]
-
-  /** ヘッダーに表示する各指標がわかりづらいので、ツールチップを表示する。その説明文 */
-  const keyToTipText: Record<string, string> = {
-    infoShareActivity: 'フレームワークに対する質問に対して、どれくらい回答が活発に行われているか',
-    developmentActivity: 'コミットがどれだけ活発に行われているか',
-    maintenance: 'メンテナンス(issueへの回答、バグの修正)が行われている度合い',
-    popularity: 'ダウンロード数やスター数から算出した人気',
-    maturity: '破壊的変更が起きる確率の低さ',
-  }
 
   let loading = true
   let frameworkWithScores: FrameworkWithScore[] = []
@@ -136,7 +116,7 @@
       // 類似度に関するセル
       ...Object.fromEntries(
         similarityTargets.map((similarityTarget) => [
-          _getSimilarityKey(similarityTarget),
+          getSimilarityKeyByFrameworkName(similarityTarget.name),
           roundByTheDigits(
             _getSimilarityBetween(eachFramework.id, similarityTarget.id),
             settings.digits,
@@ -146,43 +126,29 @@
     }
 
     // 重み付けスコアのセル
-    const weightedScore: number = evaluations.reduce((sum, evaluation) => {
-      const thisEvaluationValue = row[evaluation.key]
-      return (
-        sum +
-        (typeof thisEvaluationValue === 'number' ? thisEvaluationValue : 0) * evaluation.weight
-      )
-    }, 0)
+    const weightedScore: number = Object.entries(evaluations).reduce(
+      (sum, [evaluationKey, evaluationWeight]) => {
+        const thisEvaluationValue = row[evaluationKey]
+        if (typeof thisEvaluationValue === 'string') return sum
+
+        return sum + (thisEvaluationValue ?? 0) * (evaluationWeight ?? 0)
+      },
+      0,
+    )
     return { ...row, weightedScore: roundByTheDigits(weightedScore, settings.digits) }
   })
 
   /** 重みのバリデーションを行い、有効であれば反映する */
   function handleWeightInputChange(e: { currentTarget: HTMLInputElement }) {
-    // 重みの入力欄が`<input name={<key>} class="weight-input" />`と設置されている前提
-    const weightInputElems: HTMLInputElement[] = Array.from(
-      document.querySelectorAll<HTMLInputElement>('.weight-input'),
-    )
-    if (!_validateWeights(weightInputElems.map((elem) => elem.valueAsNumber))) {
+    const inputingValue = e.currentTarget.valueAsNumber
+    if (inputingValue < 0 || inputingValue > 1) {
       e.currentTarget.setCustomValidity('重みは0~1の値を入力してください')
       e.currentTarget.reportValidity()
       return
     }
 
     e.currentTarget.setCustomValidity('')
-    evaluations = evaluations.map((ev) => {
-      if (ev.key === e.currentTarget.name) {
-        ev.weight = e.currentTarget.valueAsNumber
-      }
-      return ev
-    })
-  }
-
-  function _validateWeights(weights: number[]): boolean {
-    // 重みの絶対値が1を超えるものをはじく
-    if (weights.some((w) => Math.abs(w) > 1)) return false
-    // 重みの合計に関するバリデーション
-    // if (newEvaluations.reduce((sum, current) => sum + current.weight, 0) < 1) return false
-    return true
+    evaluations = { ...weightForm }
   }
 
   let settings = {
@@ -219,25 +185,20 @@
     },
   }
 
-  function _assginWeightInputElement(
-    preset: {
-      [K in
-        | 'infoShareActivity'
-        | 'developmentActivity'
-        | 'maintenance'
-        | 'popularity'
-        | 'maturity']: number
-    },
-  ) {
-    // input要素に無理やり代入する
-    for (const [key, value] of Object.entries(preset)) {
-      const elem = document.querySelector<HTMLInputElement>(`input.weight-input[name="${key}"]`)
-      if (elem == null) continue
-
-      elem.value = value.toString()
-      evaluations = evaluations.map((ev) => (ev.key === key ? { ...ev, weight: value } : ev))
-    }
+  function _assginWeightInputElement(preset: { [K in EvaluationKey]?: number }) {
+    weightForm = { ...preset }
+    evaluations = { ...weightForm }
   }
+
+  /** { [key: 指標のキー]: その指標のツールチップに表示する説明 } */
+  $: keyToTipText = Object.fromEntries(
+    Object.entries(EVALUATION_TEXTS).map(([key, info]) => [key, info.tip]),
+  )
+  /**
+   * ヘッダーの左から表示されている順に指標のキーを並べた配列．
+   * ヘッダーの最初には「フレームワーク」最後には「重み付けスコア」が配置されている前提．これらは指標とは関係ないので除外する
+   */
+  $: evaluationsKeys = headers.slice(1, -1).map((header) => header.key) as EvaluationKey[]
 </script>
 
 <div class="container">
@@ -273,14 +234,14 @@
         icon={Information16}
       />
     </span>
-    {#each evaluations as evaluation}
+    {#each evaluationsKeys as evaluationKey}
       <div class="each-weight-input-wrapper">
         <input
           type="number"
           step="0.01"
           on:change={handleWeightInputChange}
-          name={evaluation.key}
-          class="weight-input"
+          bind:value={weightForm[evaluationKey]}
+          name={evaluationKey}
         />
       </div>
     {/each}

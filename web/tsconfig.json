@@ -25,7 +25,8 @@
     "checkJs": true,
     "paths": {
       "~/*": ["src/*"],
-      "@server/*": ["../server/src/*"]
+      "@server/*": ["../server/src/*"],
+      "@cron/*": ["../cron/src/*"]
     }
   },
   "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
