@@ -230,7 +230,7 @@
     <span class="weight-label">
       重み(それぞれ0 ~ 1)
       <TooltipIcon
-        tooltipText="各指標をどれだけ重要視するか入力してください"
+        tooltipText="各指標をどれだけ重要視するかを0~1の範囲で入力してください"
         icon={Information16}
       />
     </span>
