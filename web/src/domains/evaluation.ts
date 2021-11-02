@@ -5,7 +5,7 @@ export type DefaultEvaluationKey = keyof Omit<Score, 'id' | 'frameworkId'>
 
 /**
  * キーにドットがあると，DataTableが想定外の動作をするため，ドットは弾く必要があることに注意されたい．
- * @see {getSimilarityKey}
+ * @see {getSimilarityKeyByFrameworkName}
  */
 type FrameworkSimilarityKey = `${string}_similarity`
 
@@ -26,11 +26,17 @@ export const EVALUATION_TEXTS: Record<DefaultEvaluationKey, { text: string; tip:
     text: '情報共有の活発さ',
     tip: 'フレームワークに対する質問に対して、どれくらい回答が活発に行われているか',
   },
-  developmentActivity: { text: '開発の活発さ', tip: 'コミットがどれだけ活発に行われているか' },
+  developmentActivity: {
+    text: '開発の活発さ',
+    tip: '新機能の追加やドキュメントの更新がどれだけ活発に行われているか',
+  },
   maintenance: {
     text: 'メンテナンス',
     tip: 'メンテナンス(issueへの回答、バグの修正)が行われている度合い',
   },
-  popularity: { text: '人気度', tip: 'ダウンロード数やスター数から算出した人気' },
-  maturity: { text: '成熟度', tip: '破壊的変更が起きる確率の低さ' },
+  popularity: {
+    text: '人気度',
+    tip: 'ダウンロードが活発に行われているか，またスターが活発につけられているか',
+  },
+  maturity: { text: '成熟度', tip: '破壊的変更が起きる確率が低く，どれだけ安定しているか' },
 }
