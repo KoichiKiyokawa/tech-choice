@@ -286,7 +286,7 @@
   <ul class="preset-wrapper">
     <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
     <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
-    <li><button on:click={presetHandler.developmentActivityOriented}>開発の活発さ重視</button></li>
+    <li><button on:click={presetHandler.developmentActivityOriented}>進化の早さ重視</button></li>
   </ul>
 
   <h2>設定</h2>
