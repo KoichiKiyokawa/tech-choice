@@ -36,7 +36,7 @@ export const EVALUATION_TEXTS: Record<DefaultEvaluationKey, { text: string; tip:
   },
   popularity: {
     text: '人気度',
-    tip: 'ダウンロードが活発に行われているか，またスターが活発につけられているか',
+    tip: 'どれだけ注目されているか',
   },
   maturity: { text: '成熟度', tip: '破壊的変更が起きる確率が低く，どれだけ安定しているか' },
 }
