@@ -24,7 +24,7 @@ export const getSimilarityKeyByFrameworkName = (frameworkName: string): Framewor
 export const EVALUATION_TEXTS: Record<DefaultEvaluationKey, { text: string; tip: string }> = {
   infoShareActivity: {
     text: '情報共有の活発さ',
-    tip: 'フレームワークに対する質問に対して、どれくらい回答が活発に行われているか',
+    tip: 'フレームワークに関する質問やそれに対する回答がどれだけ活発に行われているか',
   },
   developmentActivity: {
     text: '開発の活発さ',
