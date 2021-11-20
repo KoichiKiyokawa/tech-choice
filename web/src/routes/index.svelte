@@ -59,7 +59,7 @@
     // 類似度に関する指標たち
     ...similarityTargets.map((target) => ({
       key: getSimilarityKeyByFrameworkName(target.name),
-      value: `similarity to ${target.name}`,
+      value: `Similarity to ${target.name}`,
     })),
     { key: 'weightedScore', value: 'Weighted score' },
   ]
