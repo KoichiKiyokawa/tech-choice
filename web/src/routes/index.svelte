@@ -50,7 +50,7 @@
   /** 表のヘッダー */
   let headers: { key: 'name' | EvaluationKey | 'weightedScore'; value: string }[]
   $: headers = [
-    { key: 'name', value: 'フレームワーク' },
+    { key: 'name', value: 'Framework' },
     // デフォルトで表示する指標たち
     ...Object.entries(EVALUATION_TEXTS).map(([key, info]) => ({
       key: key as EvaluationKey,
@@ -59,9 +59,9 @@
     // 類似度に関する指標たち
     ...similarityTargets.map((target) => ({
       key: getSimilarityKeyByFrameworkName(target.name),
-      value: `${target.name}との類似度`,
+      value: `similarity to ${target.name}`,
     })),
-    { key: 'weightedScore', value: '重み付けスコア' },
+    { key: 'weightedScore', value: 'Weighted score' },
   ]
 
   let loading = true
@@ -228,7 +228,9 @@
 
   <div class="weight-inputs-wrapper" style="--col-length: {headers.length}">
     <span class="weight-label">
-      重み(それぞれ0 ~ 1)
+      <div>
+        weight<span style="display: inline-block;">(0 ~ 1 for each)</span>
+      </div>
       <TooltipIcon
         tooltipText="各指標をどれだけ重要視するかを0~1の範囲で入力してください"
         icon={Information16}
@@ -248,7 +250,7 @@
   </div>
 
   <h2>
-    類似度の比較を行うフレームワーク
+    Frameworks to be compared for similarity
     <TooltipIcon icon={Information16}>
       <div slot="tooltipText" style="display: block;">
         <p>APIの類似度を比較します</p>
@@ -270,7 +272,7 @@
   <MultiSelect
     spellcheck="false"
     filterable
-    placeholder="フレームワークを検索..."
+    placeholder="Search frameworks..."
     bind:selectedIds={similarityTargetIds}
     on:select={onSelectSimilarityTarget}
     items={frameworkWithScores.map((framework) => ({
@@ -282,16 +284,20 @@
     <Tag>{similarityTarget.name}</Tag>
   {/each}
 
-  <h2>重みのプリセット</h2>
+  <h2>Weight presets</h2>
   <ul class="preset-wrapper">
-    <li><button on:click={presetHandler.beginner}>初心者向け</button></li>
-    <li><button on:click={presetHandler.stabilityOriented}>安定性重視</button></li>
-    <li><button on:click={presetHandler.developmentActivityOriented}>進化の早さ重視</button></li>
+    <li><button on:click={presetHandler.beginner}>For beginners</button></li>
+    <li><button on:click={presetHandler.stabilityOriented}>Stability oriented</button></li>
+    <li>
+      <button on:click={presetHandler.developmentActivityOriented}
+        >Speed of evolution oriented</button
+      >
+    </li>
   </ul>
 
-  <h2>設定</h2>
+  <h2>Settings</h2>
   <label>
-    表示桁数
+    Number of display digits
     <input type="number" bind:value={settings.digits} />
   </label>
 </div>
@@ -352,5 +358,9 @@
   .container :global(thead) {
     /* ヘッダーに配置されているツールチップが見切れないように */
     overflow: visible;
+  }
+
+  .container :global(.bx--table-header-label) {
+    font-size: 0.8rem;
   }
 </style>

@@ -23,20 +23,20 @@ export const getSimilarityKeyByFrameworkName = (frameworkName: string): Framewor
 /** ヘッダーに表示する各指標がわかりづらいので、ツールチップを表示する。その説明文 */
 export const EVALUATION_TEXTS: Record<DefaultEvaluationKey, { text: string; tip: string }> = {
   infoShareActivity: {
-    text: '情報共有の活発さ',
+    text: 'Info share activity',
     tip: 'フレームワークに関する質問やそれに対する回答がどれだけ活発に行われているか',
   },
   developmentActivity: {
-    text: '開発の活発さ',
+    text: 'Development activity',
     tip: '新機能の追加やドキュメントの更新がどれだけ活発に行われているか',
   },
   maintenance: {
-    text: 'メンテナンス',
+    text: 'Maintenance',
     tip: 'メンテナンス(issueへの回答、バグの修正)が行われている度合い',
   },
   popularity: {
-    text: '人気度',
+    text: 'Popularity',
     tip: 'どれだけ注目されているか',
   },
-  maturity: { text: '成熟度', tip: '破壊的変更が起きる確率が低く，どれだけ安定しているか' },
+  maturity: { text: 'Maturity', tip: 'The degree of stability with few destructive changes' },
 }
