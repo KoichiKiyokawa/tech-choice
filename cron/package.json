@@ -17,7 +17,7 @@
     "run:save-evaluation": "find src/save-evaluation -name \"*.ts\" | xargs -If yarn ts-node f"
   },
   "dependencies": {
-    "@prisma/client": "^3.0.2",
+    "@prisma/client": "^3.10.0",
     "@urql/core": "^2.3.1",
     "dayjs": "^1.10.6",
     "decimal.js": "^10.3.1",
@@ -38,7 +38,7 @@
     "graphql": "^15.5.1",
     "jest": "^27.0.6",
     "pino-pretty": "^6.0.0",
-    "prisma": "^3.0.2",
+    "prisma": "^3.10.0",
     "ts-jest": "^27.0.3",
     "ts-node": "10.1.0",
     "typescript": "^4.3.5"
