@@ -2,12 +2,14 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 // React, Vue などのフレームワークに関するデータを格納する
@@ -20,7 +22,8 @@ model Framework {
   // そのフレームワークを用いたコードのURL。フレームワークのAPIの類似度を比較するときに用いる。主にRealWorldプロジェクトのURL。
   // シンプルで、フレームワークのAPIの違いのみを比較しやすいログインコンポーネント or ページを用いる。
   // コードが複数のファイルに分かれる場合を想定して、配列で定義する。複数ある場合は、template -> js -> styleの順に格納する
-  codeURLs    String[]
+  // codeURLs    String[] // mysqlはサポートしてない https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#:~:text=Relational%20databases-,Scalar%20lists,-(arrays)%20are%20only
+  codeURLs    String
   officialURL String? // そのフレームワークの公式サイトのURL
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
@@ -103,7 +106,7 @@ model Star {
 model Score {
   id                  Int       @id @default(autoincrement())
   framework           Framework @relation(fields: [frameworkId], references: [id])
-  frameworkId         Int
+  frameworkId         Int       @unique
   maintenance         Float     @default(0) // メンテナンスがされているか
   popularity          Float     @default(0) // 人気
   developmentActivity Float     @default(0) // 開発の活発さ
