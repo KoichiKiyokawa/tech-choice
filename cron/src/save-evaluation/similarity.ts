@@ -18,8 +18,8 @@ async function main() {
     if (fwA.codeURLs == null || fwB.codeURLs == null) continue
 
     const [codeAs, codeBs] = await Promise.all([
-      Promise.all(fwA.codeURLs.map(fetchCodeFromUrl)),
-      Promise.all(fwB.codeURLs.map(fetchCodeFromUrl)),
+      Promise.all(fwA.codeURLs.replace(/\{|\}/g, '').split(',').map(fetchCodeFromUrl)),
+      Promise.all(fwB.codeURLs.replace(/\{|\}/g, '').split(',').map(fetchCodeFromUrl)),
     ])
     if (codeAs.some((code) => code == null))
       console.error(`[save-evaluation/similarity] fetched code is empty for framework: ${fwA.name}`)

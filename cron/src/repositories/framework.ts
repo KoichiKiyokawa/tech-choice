@@ -10,7 +10,7 @@ async function main() {
   await Promise.all(
     FRAMEWORK_WITH_OWNER_LIST.map((nameWithOwner) => {
       const data = FRAMEWORK_DATA.find((f) => f.name === nameWithOwner.name)
-      const operator = { ...nameWithOwner, ...data }
+      const operator = { ...nameWithOwner, ...data, codeURLs: '{' + data?.codeURLs.join(',') + '}' }
       return prisma.framework.upsert({
         create: operator,
         update: operator,
