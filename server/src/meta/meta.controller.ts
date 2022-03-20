@@ -3,8 +3,12 @@ import { prisma } from '../modules/prisma'
 export const MetaController = {
   async touch() {
     await prisma.meta.upsert({
-      create: {},
-      update: {},
+      create: {
+        touchedAt: new Date(),
+      },
+      update: {
+        touchedAt: new Date(),
+      },
       where: {
         id: 1,
       },
