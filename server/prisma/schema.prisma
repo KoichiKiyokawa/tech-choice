@@ -132,3 +132,9 @@ model Question {
   askedAt     DateTime // 質問がされた日時
   answerCount Int // 回答数
 }
+
+model Meta {
+  id        Int      @id @default(autoincrement())
+  // PlanetScaleは一定期間書き込みがないとデータベースがスリープしてしまう。そのため、定期的に更新するカラム
+  touchedAt DateTime @default(now())
+}
