@@ -142,7 +142,7 @@
   function handleWeightInputChange(e: { currentTarget: HTMLInputElement }) {
     const inputingValue = e.currentTarget.valueAsNumber
     if (inputingValue < 0 || inputingValue > 1) {
-      e.currentTarget.setCustomValidity('重みは0~1の値を入力してください')
+      e.currentTarget.setCustomValidity('Enter a value between 0 and 1 for the weight')
       e.currentTarget.reportValidity()
       return
     }
@@ -232,7 +232,7 @@
         weight<span style="display: inline-block;">(0 ~ 1 for each)</span>
       </div>
       <TooltipIcon
-        tooltipText="各指標をどれだけ重要視するかを0~1の範囲で入力してください"
+        tooltipText="Please enter how important you consider each indicator in the range of 0 to 1"
         icon={Information16}
       />
     </span>
@@ -253,17 +253,19 @@
     Frameworks to be compared for similarity
     <TooltipIcon icon={Information16}>
       <div slot="tooltipText" style="display: block;">
-        <p>APIの類似度を比較します</p>
+        <p>You can compare API similarities.</p>
         <div style="display: flex;">
-          <span style="display: inline-block; width: 2rem;">例1)</span>
+          <span style="display: inline-block; width: 2rem;">Example 1)</span>
           <span style="display: inline-block; flex: 1">
-            すでに習得済みのフレームワークを選択することで、追加の学習コストが低いフレームワークを探すことができます。
+            By selecting a framework that you have already mastered, you can find a framework with
+            low additional learning costs.
           </span>
         </div>
         <div style="display: flex;">
-          <span style="display: inline-block; width: 2rem;">例2)</span>
+          <span style="display: inline-block; width: 2rem;">Example 2)</span>
           <span style="display: inline-block; flex: 1">
-            すでに導入済みのフレームワークを選択することで、移行コストの低いフレームワークを探すことができます。
+            By selecting a framework that you are already using, you can find a framework with low
+            migration costs.
           </span>
         </div>
       </div>
